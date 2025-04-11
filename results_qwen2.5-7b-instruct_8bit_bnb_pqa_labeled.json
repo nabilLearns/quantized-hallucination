@@ -1,0 +1,43 @@
+{
+    "experiment_name": "qwen2.5-7b-instruct_8bit_bnb_pqa_labeled",
+    "metrics": {
+        "cm": [
+            [
+                828,
+                172
+            ],
+            [
+                188,
+                812
+            ]
+        ],
+        "accuracy": 0.82,
+        "precision": 0.8252032520325203,
+        "recall": 0.812,
+        "f1": 0.8185483870967742,
+        "abstention_rate": 0.0,
+        "gpu_peak_memory_gb": 9.142366409301758,
+        "fnr_difficulty": {
+            "hard": 0.2696078431372549,
+            "medium": 0.16352201257861634,
+            "easy": 0.0948905109489051
+        },
+        "fnr_category": {
+            "Incomplete Information": 0.30660377358490565,
+            "Mechanism and Pathway Misattribution": 0.030303030303030304,
+            "Methodological and Evidence Fabrication": 0.0,
+            "Misinterpretation of #Question#": 0.1622340425531915
+        },
+        "tpr_difficulty": {
+            "hard": 0.7303921568627451,
+            "medium": 0.8364779874213837,
+            "easy": 0.9051094890510949
+        },
+        "tpr_category": {
+            "Incomplete Information": 0.6933962264150944,
+            "Mechanism and Pathway Misattribution": 0.9696969696969697,
+            "Methodological and Evidence Fabrication": 1.0,
+            "Misinterpretation of #Question#": 0.8377659574468085
+        }
+    }
+}
