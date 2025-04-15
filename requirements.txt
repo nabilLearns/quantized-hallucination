@@ -1,0 +1,19 @@
+transformers
+accelerate
+datasets
+optimum
+peft
+# auto-gptq # not in use (yet)
+bitsandbytes # needs a GPU
+scikit-learn
+matplotlib
+tqdm
+hydra-core
+omegaconf
+pyyaml
+huggingface_hub
+# llama-cpp-python # tried using in jnb ; not in use atm
+gguf
+hf_xet
+
+torch # maybe specify specific version?
