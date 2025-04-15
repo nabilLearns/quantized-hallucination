@@ -1,0 +1,23 @@
+defaults:
+  - model: qwen
+  - quantization: uncompressed
+  - dataset: pqa_labeled
+  - _self_
+
+device: auto
+max_samples: 1000
+batch_size: 8
+max_new_tokens: 3
+results_filename: 'results.json'
+
+hydra:
+  sweeper:
+    params:
+      model: qwen
+      quantization: gguf
+      quantization.level: q8_0, q6_k, q5_k_m, q5_k_s, q4_k_m, q4_k_s, iq4_xs, q3_k_l, q3_k_m, q3_k_s, q2_k
+  run:
+    dir: outputs/${now:%Y-%m-%d}${now:%H-%M-%S}
+  sweep:
+    dir: multirun/${now:%Y-%m-%d}_${now:%H-%M-%S}
+    subdir: ${hydra.job.num}_${hydra.job.override_dirname}

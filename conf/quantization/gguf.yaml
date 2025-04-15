@@ -1,0 +1,47 @@
+method: gguf
+level: q4_k_m # []
+model_load_kwargs:
+    pass_dynamic_config: True
+
+#levels that are in both qwen and llama-med
+#q8_0
+#q6_k
+#q5_k_m
+#q5_k_s
+#q4_k_m
+#q4_k_s
+#iq4_xs
+#q3_k_l
+#q3_k_m
+#q3_k_s
+#q2_k
+
+
+#qwen
+    #q8_0
+    #q6_k_l not in llama-med
+    #q6_k
+    #q5_k_l not in llama-med
+    #q5_k_m
+    #q5_k_s
+    #q4_k_l not in llama-med
+    #q4_k_m
+    #q4_k_s
+    #iq4_xs
+    #q3_k_xl not in llama-med
+    #q3_k_l
+    #q3_k_m
+    #q3_k_s
+    #q2_k
+#llama3-med
+    #q8_0: Llama3-Med42-8B.Q8_0.gguf     # yes
+    #q6_k: Llama3-Med42-8B.Q6_K.gguf     # yes
+    #q5_k_m: Llama3-Med42-8B.Q5_K_M.gguf # yes
+    #q5_k_s: Llama3-Med42-8B.Q5_K_S.gguf # yes
+    #q4_k_m: Llama3-Med42-8B.Q4_K_M.gguf # yes
+    #q4_k_s: Llama3-Med42-8B.Q4_K_S.gguf # yes
+    #iq4_xs: Llama3-Med42-8B.IQ4_XS.gguf # yes
+    #q3_k_l: Llama3-Med42-8B.Q3_K_L.gguf # yes
+    #q3_k_m: Llama3-Med42-8B.Q3_K_M.gguf        # yes
+    #q3_k_s: Llama3-Med42-8B.Q3_K_S.gguf        # yes
+    #q2_k: Llama3-Med42-8B.Q2_K.gguf     # yes

@@ -1,0 +1,4 @@
+method: bnb #bitsandbytes
+level: 4bit # default ; can be overridden
+model_load_kwargs:
+    pass_dynamic_config: True
