@@ -12,7 +12,7 @@ hydra-core
 omegaconf
 pyyaml
 huggingface_hub
-# llama-cpp-python # tried using in jnb ; not in use atm
+llama-cpp-python # use it for gguf models ; it seems that HF de-quantizes wts
 gguf
 hf_xet
 

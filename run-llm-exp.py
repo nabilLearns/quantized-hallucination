@@ -12,7 +12,7 @@ from typing import List, Tuple, Dict, Optional
 from tqdm import tqdm # inference progress bar
 import math           # math.ceil is used for computing # batches (inference)
 from dataclasses import dataclass # for HallucinationMetrics class ; not used atm
-#from llama_cpp import Llama # for gguf file ; not used atm
+from llama_cpp import Llama # for gguf file ; not used atm
 import yaml # for cfgs
 import logging
 from abc import ABC, abstractmethod
@@ -22,103 +22,76 @@ import json # final results for a run will be written to a json file
 from omegaconf import DictConfig, OmegaConf
 import hydra
 import subprocess
-
-# --- Configuration ---
-#MODEL_NAME = 'Qwen/Qwen2.5-7B-Instruct'
-#DATASET_NAME = 'UTAustin-AIHealth/MedHallu'
-#DATASET_CONFIG = 'pqa_labeled'
-#BATCH_SIZE = 8
-#MAX_SAMPLES = 1000
-#QUANTIZATION_MODE = 'gguf' #'8bit_bnb' #'uncompressed'
-#EXPERIMENT_NAME = f'{MODEL_NAME.lower()}_{QUANTIZATION_MODE.lower()}_{DATASET_CONFIG.lower()}'
+from huggingface_hub import hf_hub_download
 
 # --- Setup logging ---
 log = logging.getLogger(__name__)
 
-# --- Hydra replaces the python logger so the logging setup below doesn't do anything (?) ---
-#logging.basicConfig(
-#    filename='example.log',
-#    encoding='utf-8',
-#    format='%(asctime)s %(message)s',
-#    datefmt='%m/%d/%Y %I:%M:%S %p',
-#    level=logging.INFO)
-#print("Logger setup completed.")
-#log.info("Logger setup completed.")
-# --------------------------------
-
 # --- Helper Classes/Functions ---
 class AbstractModelLoader(ABC):
     @abstractmethod
-    def _build_tokenizer(self, cfg):
+    def _get_tokenizer_kwargs(self):
         pass
     @abstractmethod
-    def _build_hf_model(self, cfg):
+    def _build_tokenizer(self):
         pass
     @abstractmethod
-    def _build_gguf_model(self, cfg):
+    def _get_model_kwargs(self):
         pass
     @abstractmethod
-    def load(self):
+    def _build_hf_model(self):
+        pass
+    @abstractmethod
+    def _download_gguf_to_local_machine(self):
+        pass
+    @abstractmethod
+    def _build_gguf_model(self):
+        pass
+    @abstractmethod
+    def build_model_and_tokenizer(self):
         pass
 
 class ModelLoader(AbstractModelLoader):
-    def __init__(self, model_family: str, quantization_method: str, quantization_level: Optional[str]=None, device:str="auto"):
+    def __init__(self,
+                 model_family: str,
+                 quantization_method: str,
+                 quantization_level: Optional[str]=None,
+                 base_hf_id: Optional[str]=None,
+                 gguf_hf_id: Optional[str]=None,
+                 gguf_fpath: Optional[str]=None,
+                 model_specific_tokenizer_kwargs: Optional[Dict[str, str|bool]]=None,
+                 device:str="auto"):
+
         self.model_family = model_family
         self.quantization_method = quantization_method
         self.quantization_level = quantization_level
         self.device = device
-        self.model_configs = {
-            'qwen': {
-                'base_hf_id': 'Qwen/Qwen2.5-7B-Instruct',
-                'gguf_hf_id': 'bartowski/Qwen2.5-7B-Instruct-GGUF',
-                'gguf_files': {
-                    'Q8_0':   'Qwen2.5-7B-Instruct-Q8_0.gguf',
-                    'Q6_K_L': 'Qwen2.5-7B-Instruct-Q6_K_L.gguf',
-                    'Q6_K': 'Qwen2.5-7B-Instruct-Q6_K.gguf',
-                    'Q5_K_S': 'Qwen2.5-7B-Instruct-Q5_K_S.gguf',
-                    'Q4_K_M': 'Qwen2.5-7B-Instruct-Q4_K_M.gguf',
-                    'Q3_K_XL': 'Qwen2.5-7B-Instruct-Q3_K_XL.gguf',
-                    'Q2_K': 'Qwen2.5-7B-Instruct-Q2_K.gguf'
-                },
-                'tokenizer_kwargs': {'padding_side': 'left'},
-            },
-            'llama3-med': {
-                'base_hf_id': 'm42-health/Llama3-Med42-8B',
-                'gguf_hf_id': 'mradermacher/Llama3-Med42-8B-GGUF',
-                'gguf_files': {
-                    'Q8_0': 'Llama3-Med42-8B.Q8_0.gguf',
-                    'Q6_K': 'Llama3-Med42-8B.Q6_K.gguf',
-                    'Q5_K_S': 'lama3-Med42-8B.Q5_K_S.gguf',
-                    'Q5_K_M': 'Llama3-Med42-8B.Q5_K_M.gguf',
-                    'IQ4_XS': 'Llama3-Med42-8B.IQ4_XS.gguf',
-                    'Q4_K_S': 'Llama3-Med42-8B.Q4_K_S.gguf',
-                    'Q4_K_M': 'Llama3-Med42-8B.Q4_K_M.gguf',
-                    # add llama levels
-                },
-                'tokenizer_kwargs': {}
-            }
-            # We can add more families later inshaAllah (・ω<)
-        }
-        self.config = {}
-        try:
-            self.config = self.model_configs[self.model_family]
-        except:
-            log.error(f"Invalid model family. We only support the following families: {str(list(self.model_configs.keys()))}")
-    
-    def _get_tokenizer_kwargs():
+
+        # get these from the config file
+        self.base_hf_id = base_hf_id
+        self.gguf_hf_id = gguf_hf_id
+        self.gguf_fpath = gguf_fpath # selected by hydra at cli
+        self.model_specific_tokenizer_kwargs = model_specific_tokenizer_kwargs
+        #self.tokenizer = _build_tokenizer()
+        #self.model = _build_model()
+        #self.model_kwargs = model_kwargs
+            
+    def _get_tokenizer_kwargs(self):
         # default
         tokenizer_kwargs = {
             'trust_remote_code': True,
-            **self.config.get('tokenizer_kwargs',{})
+            **self.model_specific_tokenizer_kwargs
         }
+        #log.info(tokenizer_kwargs)
         if 'gguf' in self.quantization_method:
             try:
-                tokenizer_kwargs['gguf_file'] = self.config['gguf_files'][f'{self.quantization_level}']
+                tokenizer_kwargs['gguf_file'] = self.gguf_fpath #self.config['gguf_files'][f'{self.quantization_level}']
             except:
                 log.error(f"Tokenizer Kwargs: Was not able to extract {self.model_family} {self.quantization_level} gguf file from config.")
+        # should this just be a self variable?
         return tokenizer_kwargs
 
-    def _get_model_kwargs():
+    def _get_model_kwargs(self):
         # default
         model_kwargs = {
             'quantization_config': None,
@@ -126,51 +99,70 @@ class ModelLoader(AbstractModelLoader):
             'attn_implementation': "eager", # can use 'flash-attention-2' if user nvidia ampere or newer
             'torch_dtype': t.float16, # depends on gpu being used ; 
             'trust_remote_code': True,
-            #**self.config.get('model_kwargs',{})
+            #**self.model_kwargs
         }
         if 'gguf' in self.quantization_method:
             try:
-                model_kwargs['gguf_file'] = self.config['gguf_files'][f'{self.quantization_level}']
+                model_kwargs['gguf_file'] = self.gguf_fpath #self.config['gguf_files'][f'{self.quantization_level}']
             except:
                 log.error(f"Model Kwargs: Was not able to extract {self.model_family} {self.quantization_level} gguf file from config.")        
         elif 'uncompressed' in self.quantization_method:
             log.info("Loading uncompressed model.")
-        # add if statements to modify model_kwargs['quantization_config'] if we add more quantization methods
-        # if self.quantization_methods == .... and self.quantization_level == ...
-        # model_kwargs['quantization_config'] = quantization_config
-        
+        # should this just be a self variable?
         return model_kwargs
             
     def _build_tokenizer(self):
-        tokenizer_path = self.config['base_hf_id']; log.info(f"Loading tokenizer from: {tokenizer_path}")
-        tokenizer_kwargs = _get_tokenizer_kwargs()
+        tokenizer_path = self.base_hf_id #self.config['base_hf_id']; 
+        log.info(f"Loading tokenizer from: {tokenizer_path}")
+        tokenizer_kwargs = self._get_tokenizer_kwargs()
+        log.info(tokenizer_kwargs)
+        #tokenizer = AutoTokenizer.from_pretrained(tokenizer_path, **tokenizer_kwargs)
+        if self.quantization_method == 'gguf':
+            try:
+                log.info("Attempting to build gguf tokenizer.")
+                tokenizer = AutoTokenizer.from_pretrained(self.gguf_hf_id, **tokenizer_kwargs)
+                log.info("Done building gguf tokenizer.")
+                return tokenizer
+            except:
+                log.info("Failed to build gguf tokenizer. Using tokenizer for base model instead.")
+                tokenizer_kwargs.pop('gguf_file')
+                #pass
         tokenizer = AutoTokenizer.from_pretrained(tokenizer_path, **tokenizer_kwargs)
+        log.info("TOKENIZER BUILT!")
+        log.info(type(tokenizer))
+        #self.tokenizer = tokenizer
+        return tokenizer
         
     def _build_hf_model(self):
         model_kwargs = self._get_model_kwargs()
-        model = AutoModelForCausalML(self.config['base_hf_id'], **model_kwargs)
-        log.info(f"Successfully loaded {self.config['base_hf_id']} model.")
-        return model
-        
-    def _build_gguf_model(self):
-        model_kwargs = self._get_model_kwargs()
-        model = AutoModelForCausalML(self.config['gguf_hf_id'], **model_kwargs)
-        log.info(f"Successfully loaded {self.config['gguf_hf_id']} model.")
+        model = AutoModelForCausalLM.from_pretrained(self.base_hf_id, **model_kwargs) #(self.config['base_hf_id'], **model_kwargs)
+        log.info(f"Successfully loaded {self.base_hf_id} model.")
+        log.info(type(model))
+        #self.model = model
         return model
 
     def _download_gguf_to_local_machine(self) -> str:
         try:
-            subprocess.run(["huggingface-cli", "download", f"{self.config['gguf_hf_id']}", "--include", f"{self.config['gguf_files'][f'{self.quantization_level}']}"])
-            return 'Sucess!'
-        except:
+            log.info(f"DOWNLOADING {self.gguf_hf_id} MODEL(S) FROM HUGGING FACE")
+            hf_hub_download(repo_id=f'{self.gguf_hf_id}',filename=f'{self.gguf_fpath}')
+            return 'Success!'
+        except Exception as e:
             log.error("Was not able to download gguf model / gguf files from hugging face.")
+            log.info(e)
             return 'Failed.'
-                
+
+    def _build_gguf_model(self):
+        model_kwargs = self._get_model_kwargs()
+        model = AutoModelForCausalLM.from_pretrained(self.gguf_hf_id, **model_kwargs)
+        log.info(f"Successfully loaded {self.gguf_hf_id} model.")
+        return model
+        
     def build_model_and_tokenizer(self):
         model, tokenizer = None, None
         print(f"Loading model: {self.model_family}]") # \nHyperparams: {model_kwargs}")
         if 'gguf' in self.quantization_method:
             status = self._download_gguf_to_local_machine()
+            log.info(f"GGUF DOWNLOAD STATUS: {status}")
             if status == 'Failed.':
                 pass
             elif status == 'Success!':
@@ -183,8 +175,12 @@ class ModelLoader(AbstractModelLoader):
             log.info("Model loaded successfully!")
         return model, tokenizer
 
-class DatasetLoader():
-    def __init__(self, MAX_SAMPLES=1000, DATASET_NAME='UTAustin-AIHealth/MedHallu', DATASET_SPLIT='pqa_labelled'):
+# TODO for GGUF modes ; HF seems to de-quantize weights so perhaps it'd be good to try llama-cpp-python?
+class LlamaCppPythonModelLoader:
+    pass
+
+class DatasetLoader:
+    def __init__(self, MAX_SAMPLES=1000, DATASET_NAME='UTAustin-AIHealth/MedHallu', DATASET_SPLIT='pqa_labeled'):
         self.max_samples = MAX_SAMPLES
         self.dataset_name = DATASET_NAME
         self.dataset_split = DATASET_SPLIT
@@ -194,7 +190,7 @@ class DatasetLoader():
         ds = load_dataset(self.dataset_name, self.dataset_split)
         dataset = ds['train'] # use train split which has 1k labelled samples
         if self.max_samples is not None:
-            print(f'Limiting dataset to {self.max_samples} samples for testing.')
+            log.info(f'Limiting dataset to {self.max_samples} samples for testing.')
             dataset = dataset.select(range(self.max_samples)) # for N rows, there are 2*N answers to classify (1 gt, 1 hallucinated) 
         return dataset
 
@@ -268,7 +264,7 @@ def create_prompts(dataset):
     all_prompts = [] # all string prompts
     #all_ground_truths = [] # corresponding labels for each prompt (0: truth, 1: hallucinated)
     
-    print("Preparing prompts")
+    log.info("Preparing prompts")
     for i, row in enumerate(dataset):
         knowledge = row["Knowledge"]
         question = row["Question"]
@@ -283,24 +279,23 @@ def create_prompts(dataset):
         #all_ground_truths.append(1)
         all_prompts.append(prompt_truth)
         #all_ground_truths.append(0)
-    print("Prompts are prepared.")
     log.info("Prompts are prepared.")
     return all_prompts
 # TODO: measure inference, throughput, TTS?
-def classify_med_answers(prompts, BATCH_SIZE=8):
-    print(f"Starting batch inference on {len(prompts)} prompts...")
+def classify_med_answers(prompts, classifier, tokenizer, experiment_name: str, BATCH_SIZE=8, MAX_NEW_TOKENS=3):
     log.info(f"Starting batch inference on {len(prompts)} prompts...")
+    log.info(type(prompts))
     outputs = []
     num_batches=math.ceil(len(prompts) / BATCH_SIZE)
     with t.no_grad():
         # show inference progress bar with tqdm
-        for batch_idx in tqdm(range(num_batches), desc="Classifying Batches", unit="batch"):
+        for batch_idx in tqdm(range(num_batches), desc=f"Classifying Batches: {experiment_name}", unit="batch"):
             start_idx = batch_idx * BATCH_SIZE
-            end_idx = min(start_idx + BATCH_SIZE,len(all_prompts))
+            end_idx = min(start_idx + BATCH_SIZE, len(prompts))
             batch_prompts = prompts[start_idx:end_idx]
             batch_output = classifier(batch_prompts,
                                       #batch_size=BATCH_SIZE # redundant
-                                      max_new_tokens=3, # should this be a hyperparam we include in a cfg file?
+                                      max_new_tokens=MAX_NEW_TOKENS,
                                       pad_token_id=tokenizer.pad_token_id,
                                       eos_token_id=tokenizer.eos_token_id,
                                       do_sample=False,
@@ -318,7 +313,6 @@ def classify_med_answers(prompts, BATCH_SIZE=8):
         #    repetition_penalty=1.2
         #)
     log.info("Inference complete.")
-    print("Inference complete.")
     return outputs
 
 # fcn group 2 -> combine into a class?
@@ -337,7 +331,7 @@ def extract_prediction(generated_text):
         #print(f"Could not parse '0' or '1' from model output: {text}")
         return -1
         
-def extract_all_binary_predictions(outputs) -> Tuple[List[int], list]: # e
+def extract_all_binary_predictions(outputs) -> Tuple[List[int], list]:
     """
     for output in outputs:
         1. filter out original prompt, # b/c model output *includes the input prompt* as well as new generated text
@@ -348,7 +342,7 @@ def extract_all_binary_predictions(outputs) -> Tuple[List[int], list]: # e
     predictions = []
     raw_outputs = []
     log.info("Processing Results.")
-    print("Processing Results.")
+    log.info(type(outputs))
     for i, output in enumerate(outputs):
         model_response = None
         try:
@@ -365,11 +359,10 @@ def extract_all_binary_predictions(outputs) -> Tuple[List[int], list]: # e
         predictions.append(pred)
         raw_outputs.append(model_response) # store the raw '!!!!!' or '0' or '1'
     log.info("Results Processed.")
-    print("Results Processed.")
     return predictions, raw_outputs
 
 # fcn group 3 -> combine into a class?
-def get_hallucination_info(info_type: str, dataset): # how do I type hint a hugging face (hf) dataset?
+def get_hallucination_info(info_type: str, dataset, all_ground_truths: list[int]): # how do I type hint a hugging face (hf) dataset?
     """
     construct lists for the type and difficulty of hallucinated answers in all_prompts
     all_ground_truths:        [    1,     0,        1,    0, ...]
@@ -387,7 +380,7 @@ def get_hallucination_info(info_type: str, dataset): # how do I type hint a hugg
     elif info_type == "category":
         return hallucination_category
 
-def process_results(dataset, predictions) -> dict: # TODO: rename fcn to something less ambiguous（＾ｖ＾）
+def process_results(dataset, predictions: list[int]) -> dict: # TODO: rename fcn to something less ambiguous（＾ｖ＾）
     """
     # --- Assemble final results ---
     # example
@@ -404,8 +397,8 @@ def process_results(dataset, predictions) -> dict: # TODO: rename fcn to somethi
     
     all_ground_truths = [1,0] * dataset.num_rows # in prepare_prompts(), we alternate between adding prompts with hallucination and gt answers
     raw_gt_pred_pairs = t.tensor(list(zip(all_ground_truths, predictions))) # tensor allows for easy selection from a list of desired idxs
-    raw_hallucination_difficulty = get_hallucination_info("difficulty", dataset) # can't convert to tensor b/c has strings
-    raw_hallucination_category = get_hallucination_info("category", dataset)
+    raw_hallucination_difficulty = get_hallucination_info("difficulty", dataset, all_ground_truths) # can't convert to tensor b/c has strings
+    raw_hallucination_category = get_hallucination_info("category", dataset, all_ground_truths)
     
     valid_idxs = [idx for idx, (gt,pred) in enumerate(raw_gt_pred_pairs) if pred != -1] # explicit [0, 2, 3, 4, 7, 110]
     gt_pred_pairs = raw_gt_pred_pairs[valid_idxs] #filter_invalid_pairs(raw_gt_pred_pairs)
@@ -459,7 +452,7 @@ def compute_confusion_matrix_vals(gt_pred_pairs: list[tuple[int,int]]):
             FN_idxs.append(idx)
     return TP, FP, TN, FN, TP_idxs, FP_idxs, TN_idxs, FN_idxs
 
-def calculate_metrics(raw_gt_pred_pairs, gt_pred_pairs, valid_df):
+def calculate_metrics(raw_gt_pred_pairs: list[tuple[int, int]], gt_pred_pairs: list[tuple[int, int]], valid_df):
     """
     computes and returns the following 9 metrics:
     (1) confusion matrix, (2) accuracy, (3) precision, (4) recall, (5) f1-score, (6) support, 
@@ -498,6 +491,25 @@ def calculate_metrics(raw_gt_pred_pairs, gt_pred_pairs, valid_df):
         tp_difficulty_counts = valid_df.iloc[TP_idxs]['difficulty'].value_counts() # success measure; sensitivity (a.k.a recall) (maximize!!)
         fn_category_counts = valid_df.iloc[FN_idxs]['category'].value_counts()
         tp_category_counts = valid_df.iloc[TP_idxs]['category'].value_counts()
+
+        # ensure all difficulties are represented in the difficulty dicts, categories in the category dicts
+        # prevent NaNs from showing up in the calculations for fnr or tpr below
+        difficulty_keys = ['hard', 'medium', 'easy']
+        category_keys = ['Incomplete Information',
+                         'Mechanism and Pathway Misattribution',
+                         'Misinterpretation of #Question#',
+                         'Methodological and Evidence Fabrication']
+        for k in difficulty_keys:
+            if k not in fn_difficulty_counts.keys():
+                fn_difficulty_counts[k] = 0
+            elif k not in tp_difficulty_counts.keys():
+                tp_difficulty_counts[k] = 0
+                
+        for k in category_keys:
+            if k not in fn_category_counts.keys():
+                fn_category_counts[k] = 0
+            elif k not in tp_category_counts.keys():
+                tp_category_counts[k] = 0
     
         # plot fnr
         fnr_difficulty = fn_difficulty_counts / (fn_difficulty_counts + tp_difficulty_counts)
@@ -516,7 +528,6 @@ def calculate_metrics(raw_gt_pred_pairs, gt_pred_pairs, valid_df):
         )
     else:
         log.warning("No valid predictions were made, skipping metric calculations.")
-        print("No valid predictions were made, skipping metric calculations.")
         
     metrics_dict = {
         'cm': cm,
@@ -536,52 +547,211 @@ def calculate_metrics(raw_gt_pred_pairs, gt_pred_pairs, valid_df):
     }
     return metrics_dict
 
-def write_results_to_json(EXPERIMENT_NAME, results: dict = None):
-    assert results != None
-    out_file = f"results_{EXPERIMENT_NAME}.json"
+def create_and_save_plots(experiment_name: str, metrics_dict: dict, output_dir:str) -> None:
+    """
+    Creates Plots for LLM Hallucination Detection FNR/TPR broken down by difficulty/category
+    Plots are saved, as per the desired directory structure indicated below:
+
+    medical-llm-hallucination-thesis/
+      ...
+      plots/
+        qwen_uncompressed_pqa_labeled/
+          confusion_matrix_qwen_uncompressed_pqa_labeled.png
+          perf_by_category_qwen_uncompressed_pqa_labeled.png
+          perf_by_difficulty_qwen_uncompressed_pqa_labeled.png
+    """
+    # --- Create output folder if it does not exist ---
+    output_dir = os.path.join(os.getcwd(), 'plots', f'{experiment_name}')
+    os.makedirs((output_dir),exist_ok=True)
+    
+    # --- Plot 1: FNR/TPR by Diffictuly ---
+    try:
+        fig1, axes1 = plt.subplots(1, 2, figsize=(12, 5)) # 1 row, by 2 cols, width=12,height=5
+        fig1.suptitle('Performance by Hallucination Difficulty')
+    
+        # FNR Difficulty
+        # display fn_difficulty_counts on easy, med, hard bars
+        fnr_diff = metrics_dict['fnr_difficulty'].sort_index()
+        fn_dcounts = metrics_dict['fn_difficulty_counts'].sort_index()
+        fnr_bars = axes1[0].bar(fnr_diff.index, fnr_diff.values, color='salmon')
+        axes1[0].bar_label(fnr_bars, labels=[f'n={c}' for c in fn_dcounts], fontsize=10, padding=3)
+        #axes1[0].bar_label(fn_difficulty_counts)
+        axes1[0].set_title('False Negative Rate (Miss Rate)', pad=15)
+        axes1[0].set_ylabel('Rate')
+        axes1[0].set_xlabel('Difficulty')
+        axes1[0].set_ylim(0, 1) # Standard scale for rates
+    
+        # TPR Difficulty
+        # display tp_difficulty_counts on easy, med, hard bars
+        tpr_diff = metrics_dict['tpr_difficulty'].sort_index()
+        tp_dcounts = metrics_dict['tp_difficulty_counts'].sort_index()
+        tpr_bars = axes1[1].bar(tpr_diff.index, tpr_diff.values, color='lightblue')
+        axes1[1].bar_label(tpr_bars, labels=[f'n={c}' for c in tp_dcounts], fontsize=10, padding=3)
+        axes1[1].set_title('True Positive Rate (Recall)', pad=15)
+        axes1[1].set_ylabel('Rate')
+        axes1[1].set_xlabel('Difficulty')
+        axes1[1].set_ylim(0, 1)
+    
+        plt.tight_layout()
+        save_path1 = os.path.join(output_dir, f"perf_by_difficulty_{experiment_name}.png")    
+        plt.savefig(save_path1)
+        print(f"Saved plot: {save_path1}")
+        plt.close(fig1) # Close the figure
+    except Exception as e:
+        print(f"Failed to create/save difficulty plot: {e}")
+
+    # Used to avoid overcrowding of xlabels in plots
+    rename_hallucination_categories = {
+        'Incomplete Information': 'Inc. Inf.',
+        'Mechanism and Pathway Misattribution': 'M&PM',
+        'Misinterpretation of #Question#': 'MisinterpretQ',
+        'Methodological and Evidence Fabrication': 'M&E Fab.'
+    }
+    
+    # --- Plot 2: FNR/TPR by Category ---
+    try:
+        fig2, axes2 = plt.subplots(1, 2, figsize=(12, 5)) # Wider for category labels
+        fig2.suptitle('Performance by Hallucination Category')
+    
+        # FNR Category
+        # display fn_category_counts on each bar
+        fnr_cat = metrics_dict['fnr_category'].sort_index()
+        fn_ccounts = metrics_dict['fn_category_counts'].sort_index()
+        fnr_bars = axes2[0].bar([rename_hallucination_categories[x] for x in fnr_cat.index], fnr_cat.values, color='salmon')
+        axes2[0].bar_label(fnr_bars, labels=[f'n={c}' for c in fn_ccounts], fontsize=10, padding=3)
+        axes2[0].set_title('False Negative Rate (Miss Rate)', pad=15) # in case fnr=1 for one of the categories; prevent overlap
+        axes2[0].set_ylabel('Rate')
+        axes2[0].set_xlabel('Category')
+        axes2[0].tick_params(axis='x', rotation=30)
+        axes2[0].set_ylim(0, 1)
+    
+        # TPR Category
+        # display tp_category_counts on each bar
+        tpr_cat = metrics_dict['tpr_category'].sort_index()
+        tp_ccounts = metrics_dict['tp_category_counts'].sort_index()
+        tpr_bars = axes2[1].bar([rename_hallucination_categories[x] for x in tpr_cat.index], tpr_cat.values, color='lightblue')
+        axes2[1].bar_label(tpr_bars, labels=[f'n={c}' for c in tp_ccounts], fontsize=10, padding=3)
+        axes2[1].set_title('True Positive Rate (Recall)', pad=15)
+        axes2[1].set_ylabel('Rate')
+        axes2[1].set_xlabel('Category')
+        axes2[1].tick_params(axis='x', rotation=30)
+        axes2[1].set_ylim(0, 1)
+    
+        plt.tight_layout()
+        save_path2 = os.path.join(output_dir, f"perf_by_category_{experiment_name}.png")        
+        plt.savefig(save_path2)
+        print(f"Saved plot: {save_path2}")
+        plt.close(fig2)
+    except Exception as e:
+        print(f"Failed to create/save category plot: {e}")
+
+    
+    # --- Plot 3: Confusion Matrix ---
+    try:
+        cm = metrics_dict.get('cm')
+        if cm is not None:
+            fig3, ax3 = plt.subplots(figsize=(6, 5))
+            disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=[0, 1]) # Assuming labels are 0 (Factual), 1 (Hallucinated)
+            disp.plot(ax=ax3, cmap=plt.cm.Blues)
+            ax3.set_title('Confusion Matrix')
+            # Improve labels if needed
+            ax3.set_xlabel("Predicted Label\n(0: Factual, 1: Hallucination)")
+            ax3.set_ylabel("True Label\n(0: Factual, 1: Hallucination)")
+    
+            save_path3 = os.path.join(output_dir, f"confusion_matrix_{experiment_name}.png")
+            plt.tight_layout()        
+            plt.savefig(save_path3)
+            print(f"Saved plot: {save_path3}")
+            plt.close(fig3)
+        else:
+            print("Confusion matrix data not found, skipping plot.")
+    except Exception as e:
+        print(f"Failed to create/save confusion matrix plot: {e}")
+
+def write_results_to_json(EXPERIMENT_NAME, results: dict = None, output_dir:str = None):
+    assert EXPERIMENT_NAME != None; assert results != None
+    
+    if output_dir == None:
+        # make results folder, if it does not exist
+        output_dir = os.path.join(os.getcwd(), 'results')
+        os.makedirs(output_dir, exist_ok=True)
+    
+    out_file = os.path.join(output_dir, f"results_{EXPERIMENT_NAME}.json")
     print(f"Saving results to {out_file}.")
     with open(out_file, 'w') as f:
         json.dump(results, f, indent=4)
-    print("Save complete.")
+
+    log.info("Save complete.")
     
-def write_results_to_txt(results: dict = None):
-    assert results != None
-    pprint.pp((results_df))
-    with open('results.txt', 'w') as results_file:
-        results_file.write(str(results_df))
+def write_results_to_txt(EXPERIMENT_NAME, results: dict = None, output_dir:str = None):
+    """not used atm"""
+    assert EXPERIMENT_NAME != None; assert results != None
+    
+    if output_dir == None:
+        # make results folder, if it does not exist
+        output_dir = os.path.join(os.getcwd(), 'results')
+        os.makedirs(output_dir, exist_ok=True)
+    
+    pprint.pp((results))
+    out_file = os.path.join(output_dir, f"results_{EXPERIMENT_NAME}.txt")
+    with open(out_file, 'w') as results_file:
+        results_file.write(str(results))
 
 # master fcn
 @hydra.main(version_base=None, config_path="conf/", config_name="config")
 def run_experiment(cfg: DictConfig) -> None:
-    log.info(f"Hydra output directory: {os.getcwd()}")
-    log.info(f"Configuration we're using:\n {OmegaConf.to_yaml(cfg)}")
+    #log.info(f"Configuration we're using:\n {OmegaConf.to_yaml(cfg)}")
+    log.info("####################################")
     log.info("Starting experiment run...")
+    log.info("####################################")
+    log.info(f"Hydra output directory: {os.getcwd()}")
     
     # --- Configuration --- # get values from hydra cfg object    
-    MODEL_NAME = cfg.model.name
     DATASET_NAME = cfg.dataset.name
+    # pass to DatasetLoader
     DATASET_SPLIT = cfg.dataset.split
+    #MAX_SAMPLES = cfg.max_samples
+    # pass to ModelLoader
+    MODEL_NAME = cfg.model.name
     QUANTIZATION_METHOD = cfg.quantization.method
     QUANTIZATION_LEVEL = cfg.quantization.level
-    
+    base_hf_id = cfg.model.base_hf_id
+    gguf_hf_id = cfg.model.gguf_hf_id
+    gguf_fpath = cfg.model.gguf_files.get(QUANTIZATION_LEVEL, None)
+    model_specific_tokenizer_kwargs = cfg.model.tokenizer_kwargs
+    # pass to classify_med_answers
+    BATCH_SIZE = cfg.batch_size
+    MAX_NEW_TOKENS = cfg.max_new_tokens
+
+    # if we're running an experiment for a certain gguf k-quant..
+    # relevant info on the k-quant should be in the model config
+    if 'gguf' in QUANTIZATION_METHOD:
+        assert QUANTIZATION_LEVEL in cfg.model.gguf_files.keys()
+        
     EXPERIMENT_NAME = f'{MODEL_NAME}_{QUANTIZATION_METHOD}_{QUANTIZATION_LEVEL}_{DATASET_SPLIT}'
 
     log.info(f"EXPERIMENT NAME: {EXPERIMENT_NAME}")
-    print(f"EXPERIMENT NAME: {EXPERIMENT_NAME}")
-
-    # --- Load Dataset, Model, Tokenizer ---
-    dataset = DatasetLoader().build_dataset(); assert dataset != None
+    #log.info(f"{cfg.model}")
+ 
+    # --- Load Dataset ---
+    dataset = DatasetLoader(DATASET_SPLIT=DATASET_SPLIT).build_dataset(); assert dataset != None
+    log.info("Dataset ready.")
     clean_gpu()
+    # --- Load Model, Tokenizer ---
+    model, tokenizer = ModelLoader(model_family=MODEL_NAME, 
+                                   quantization_method=QUANTIZATION_METHOD,
+                                   quantization_level=QUANTIZATION_LEVEL,
+                                   base_hf_id=base_hf_id,
+                                   gguf_hf_id=gguf_hf_id,
+                                   gguf_fpath=gguf_fpath,
+                                   model_specific_tokenizer_kwargs=model_specific_tokenizer_kwargs).build_model_and_tokenizer()
+    assert model != None
+    assert tokenizer != None
+    log.info("SUCCESS! MODEL AND TOKENIZER LOADED")
+    #quit()
+    # --- Create Prompts ---
+    all_prompts = create_prompts(dataset)
 
-   # model_family: str, quantization_method: str, quantization_level: Optional[str]=None, device:str="auto"
-    
-    model, tokenizer = ModelLoader.build_model_and_tokenizer(
-        model_family=MODEL_NAME,
-        quantization_method=QUANTIZATION_METHOD,
-        quantization_level=QUANTIZATION_LEVEL,
-    )
-    assert model != None and tokenizer != None
-    
     # --- Construct HF Pipeline ---
     classifier = pipeline(
         'text-generation',
@@ -590,22 +760,24 @@ def run_experiment(cfg: DictConfig) -> None:
         device_map="auto"
     )
 
-    # --- Create Prompts ---
-    all_prompts = create_prompts(dataset)
-
     # --- Clear memory stats *before* inference, for acc. logging of GPU usage *during* inference ---
     gc.collect()
     t.cuda.empty_cache()
     t.cuda.reset_peak_memory_stats()
 
-    # --- Inference ---
-    outputs = classify_med_answers(all_prompts, BATCH_SIZE)
+    # --- Inference --- todo: add more inference related metrics like latency, throughput?
+    outputs = classify_med_answers(prompts=all_prompts,
+                                   classifier=classifier,
+                                   tokenizer=tokenizer,
+                                   experiment_name=EXPERIMENT_NAME,
+                                   BATCH_SIZE=BATCH_SIZE,
+                                   MAX_NEW_TOKENS=MAX_NEW_TOKENS)
 
     # --- Log Peak GPU Memory Usage --- note: re-factor into function?
     peak_memory_bytes = t.cuda.max_memory_allocated()
     peak_memory_gb = peak_memory_bytes / (2**30) # 2^30B in one GB
     log.info(f"Peak GPU Memory Allocated: {peak_memory_gb} GB")
-    print(f"Peak GPU Memory Allocated: {peak_memory_gb} GB")
+    #print(f"Peak GPU Memory Allocated: {peak_memory_gb} GB")
 
     predictions, raw_outputs = extract_all_binary_predictions(outputs)
 
@@ -618,47 +790,15 @@ def run_experiment(cfg: DictConfig) -> None:
     log.info(metrics_dict)
     
     # --- Create Plots ---
-    rename_hallucination_categories = {
-        'Incomplete Information': 'Inc. Inf.',
-        'Mechanism and Pathway Misattribution': 'M&PM',
-        'Misinterpretation of #Question#': 'MisinterpretQ',
-        'Methodological and Evidence Fabrication': 'M&E Fab.'
-    }
-    
-    ## false negative rate (fnr) (misses)
-    ### plot1
-    metrics_dict['fnr_difficulty'].plot(title="False Negative (miss) rate, organized by hallucination difficulty", kind='bar')
-    ### plot2
-    metrics_dict['fnr_category'].plot(title="False Negative (miss) rate organized by category",kind='bar')
-    ### combined plot
-    plt.bar(metrics_dict['fnr_difficulty'].index, metrics_dict['fnr_difficulty'])
-    plt.bar([rename_hallucination_categories[x] for x in metrics_dict['fnr_category'].index], metrics_dict['fnr_category'])
-    plt.xticks(rotation=30)
-    plt.legend(['difficulty', 'category'])
-    plt.title("False Negative (miss) rate of hallucinated answers organized by difficulty, category")
-    plt.ylabel('False Negative Rate')
-
-    ## true positive rate (tpr) (successes)
-    ### plot 3
-    plt.bar(metrics_dict['tpr_difficulty'].index, metrics_dict['tpr_difficulty'])
-    plt.title('True Positive (hit) rate for hallucinated answers organized by difficulty')
-    ### plot 4
-    plt.bar([rename_hallucination_cat[x] for x in metrics_dict['tpr_category'].index], metrics_dict['tpr_category'])
-    plt.title('True Positive (hit) rate for hallucinated answer classification, organized by category')
-    plt.ylabel('true positive rate')
-    ### combined tpr plot
-    plt.bar(metrics_dict['tpr_difficulty'].index, metrics_dict['tpr_difficulty'])
-    plt.bar([rename_hallucination_cat[x] for x in metrics_dict['tpr_category'].index], metrics_dict['tpr_category'])
-    plt.title('True Positive (hit) rate for hallucation answer classification, organized by difficulty, category')
-    plt.legend(['difficulty', 'category'])
-    plt.ylabel('true positive rate')
-    plt.xticks(rotation=30)
+    log.info("--- Creating Plots ---")
+    create_and_save_plots(experiment_name, metrics_dict)
 
     # --- Save Results ---
+    log.info("--- Saving Final Results to JSON ---")
     #EXPERIMENT_NAME = EXPERIMENT_NAME.split('/')[-1]
 
     results = {
-        'experiment_name': EXPERIMENT_NAME.split('/')[-1],
+        'experiment_name': EXPERIMENT_NAME,
         'semi-processed_results': processed_results,
         'metrics': {
             'gpu_peak_memory_gb': peak_memory_gb,
@@ -680,6 +820,7 @@ def run_experiment(cfg: DictConfig) -> None:
         }
     }
     write_results_to_json(EXPERIMENT_NAME, results)
+    log.info("Results Saved! Experiment is Complete.")
 
 if __name__ == "__main__":
     run_experiment()

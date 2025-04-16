@@ -3,22 +3,18 @@ base_hf_id: m42-health/Llama3-Med42-8B
 gguf_hf_id: mradermacher/Llama3-Med42-8B-GGUF
 gguf_files:
     q8_0: Llama3-Med42-8B.Q8_0.gguf     # yes
-    #q6_k_l: Qwen2.5-7B-Instruct-Q6_K_L.gguf   # ???
     q6_k: Llama3-Med42-8B.Q6_K.gguf     # yes
-    #q5_k_l: Qwen2.5-7B-Instruct-Q5_K_L.gguf   # ???
     q5_k_m: Llama3-Med42-8B.Q5_K_M.gguf # yes
     q5_k_s: Llama3-Med42-8B.Q5_K_S.gguf # yes
-    #q4_k_l: Qwen2.5-7B-Instruct-Q4_K_L.gguf   # ???
     q4_k_m: Llama3-Med42-8B.Q4_K_M.gguf # yes
     q4_k_s: Llama3-Med42-8B.Q4_K_S.gguf # yes
     iq4_xs: Llama3-Med42-8B.IQ4_XS.gguf # yes
-    #q3_k_xl: Qwen2.5-7B-Instruct-Q3_K_XL.gguf # ???
     q3_k_l: Llama3-Med42-8B.Q3_K_L.gguf # yes
+    q3_k_m: Llama3-Med42-8B.Q3_K_M.gguf        # yes
+    q3_k_s: Llama3-Med42-8B.Q3_K_S.gguf        # yes
     q2_k: Llama3-Med42-8B.Q2_K.gguf     # yes
     
-    #q3_k_m: Llama3-Med42-8B.Q3_K_M.gguf        # yes
     #iq3_m: Qwen2.5-7B-Instruct-IQ3_M.gguf      # ???
-    #q3_k_s: Llama3-Med42-8B.Q3_K_S.gguf        # yes
     #iq3_xs: Qwen2.5-7B-Instruct-IQ3_XS.gguf    # ???
     #iq2_m: Qwen2.5-7B-Instruct-IQ2_M.gguf      # ???
     #q2_k_l: Qwen2.5-7B-Instruct-Q2_K_L.gguf    d# ???
