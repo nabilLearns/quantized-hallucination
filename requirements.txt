@@ -12,7 +12,8 @@ hydra-core
 omegaconf
 pyyaml
 huggingface_hub
-llama-cpp-python # use it for gguf models ; it seems that HF de-quantizes wts
+# llama-cpp-python # use it for gguf models ; it seems that HF de-quantizes wts
+ollama
 gguf
 hf_xet
 

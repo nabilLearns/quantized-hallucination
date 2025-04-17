@@ -1,7 +1,8 @@
 defaults:
-  - model: qwen
+  - model: qwen2.5-7b-it
   - quantization: uncompressed
   - dataset: pqa_labeled
+  - runtime: ollama # or hugging_face
   - _self_
 
 device: auto
@@ -13,9 +14,9 @@ results_filename: 'results.json'
 hydra:
   sweeper:
     params:
-      model: qwen
+      model: qwen2.5-7b-it
       quantization: gguf
-      quantization.level: q8_0, q6_k, q5_k_m, q5_k_s, q4_k_m, q4_k_s, iq4_xs, q3_k_l, q3_k_m, q3_k_s, q2_k
+      quantization.level: q8_0, q6_k, q5_k_m, q4_k_m, q3_k_m, q2_k
   run:
     dir: outputs/${now:%Y-%m-%d}${now:%H-%M-%S}
   sweep:

@@ -12,17 +12,20 @@ from typing import List, Tuple, Dict, Optional
 from tqdm import tqdm # inference progress bar
 import math           # math.ceil is used for computing # batches (inference)
 from dataclasses import dataclass # for HallucinationMetrics class ; not used atm
-from llama_cpp import Llama # for gguf file ; not used atm
+#from llama_cpp import Llama # for gguf file ; not used atm
+import ollama # another runtime for inference with quantized gguf models ; this seems to be the best candidate based on experience
 import yaml # for cfgs
 import logging
 from abc import ABC, abstractmethod
 import json # final results for a run will be written to a json file
+from time import time
 
 # script specific (not used in the jupyter notebook version)
 from omegaconf import DictConfig, OmegaConf
 import hydra
 import subprocess
 from huggingface_hub import hf_hub_download
+
 
 # --- Setup logging ---
 log = logging.getLogger(__name__)
@@ -178,10 +181,6 @@ class ModelLoader(AbstractModelLoader):
             log.info("Model loaded successfully!")
         return model, tokenizer
 
-# TODO for GGUF modes ; HF seems to de-quantize weights so perhaps it'd be good to try llama-cpp-python?
-class LlamaCppPythonModelLoader:
-    pass
-
 class DatasetLoader:
     def __init__(self, MAX_SAMPLES=1000, DATASET_NAME='UTAustin-AIHealth/MedHallu', DATASET_SPLIT='pqa_labeled'):
         self.max_samples = MAX_SAMPLES
@@ -284,8 +283,29 @@ def create_prompts(dataset):
         #all_ground_truths.append(0)
     log.info("Prompts are prepared.")
     return all_prompts
+
+
+def ollama_classify(prompts, model, experiment_name, BATCH_SIZE, MAX_NEW_TOKENS) -> tuple[list,list]:
+    log.info(f"Starting Ollama Hallucination Detection for {model}.")
+    outputs = []
+    latencies = []
+    for i, prompt in enumerate(prompts):
+        start = time()
+        response = ollama.chat(
+            model=model,
+            messages=prompt
+        )
+        duration = time() - start
+        if i % 10 == 0:
+            log.info(f"Inference for {i}th prompt took {duration:.2f}s | Response: {response['message']['content'].strip()}")
+        latencies.append(duration)
+        outputs.append(response['message']['content'].strip())
+    log.info("Inference Done!")
+    return outputs, latencies
+
+# this is for hugging_face runtime ; deprecated for now
 # TODO: measure inference, throughput, TTS?
-def classify_med_answers(prompts, classifier, tokenizer, experiment_name: str, BATCH_SIZE=8, MAX_NEW_TOKENS=3):
+def classify_med_answers(prompts, classifier, tokenizer, experiment_name: str, BATCH_SIZE=8, MAX_NEW_TOKENS=3) -> list:
     log.info(f"Starting batch inference on {len(prompts)} prompts...")
     log.info(type(prompts))
     outputs = []
@@ -708,20 +728,34 @@ def run_experiment(cfg: DictConfig) -> None:
     log.info("Starting experiment run...")
     log.info("####################################")
     log.info(f"Hydra output directory: {os.getcwd()}")
-    
-    # --- Configuration --- # get values from hydra cfg object    
+    log.info(f"RUNTIME: {cfg.runtime.name}")
+    # --- Configuration --- # cfg values are selected by hydra after launched from cli   
     DATASET_NAME = cfg.dataset.name
     # pass to DatasetLoader
     DATASET_SPLIT = cfg.dataset.split
     #MAX_SAMPLES = cfg.max_samples
-    # pass to ModelLoader
+    
+    # pass to ModelLoader ; change/modify now that we're using ollama for inference
+    RUNTIME = cfg.runtime.name
     MODEL_NAME = cfg.model.name
-    QUANTIZATION_METHOD = cfg.quantization.method
-    QUANTIZATION_LEVEL = cfg.quantization.level
-    base_hf_id = cfg.model.base_hf_id
-    gguf_hf_id = cfg.model.gguf_hf_id
-    gguf_fpath = cfg.model.gguf_files.get(QUANTIZATION_LEVEL, None)
-    model_specific_tokenizer_kwargs = cfg.model.tokenizer_kwargs
+    QUANTIZATION_METHOD = cfg.quantization.method # e.g., gguf, uncompressed
+    QUANTIZATION_LEVEL = cfg.quantization.level # e.g., q8_0, q4_k_m, etc.
+    
+    # needed for ollama runtime
+    if RUNTIME == 'ollama':
+        OLLAMA_FILE = cfg.model.ollama_files[QUANTIZATION_LEVEL] # e.g., hf.co/mradermacher/Llama3-Med42-8B-GGUF:Q8_0
+        log.info(f"MODEL_NAME: {MODEL_NAME}")
+        log.info(f"QUANTIZATION_METHOD: {QUANTIZATION_METHOD}")
+        log.info(f"QUANTIZATION_LEVEL: {QUANTIZATION_LEVEL}")
+        log.info(f"OLLAMA_FILE: {OLLAMA_FILE}")
+    
+    # needed for HF runtime, not for ollama
+    elif RUNTIME == 'hugging_face':
+        base_hf_id = cfg.model.base_hf_id
+        gguf_hf_id = cfg.model.gguf_hf_id
+        gguf_fpath = cfg.model.gguf_files.get(QUANTIZATION_LEVEL, None)
+        model_specific_tokenizer_kwargs = cfg.model.tokenizer_kwargs
+    
     # pass to classify_med_answers
     BATCH_SIZE = cfg.batch_size
     MAX_NEW_TOKENS = cfg.max_new_tokens
@@ -729,57 +763,86 @@ def run_experiment(cfg: DictConfig) -> None:
     # if we're running an experiment for a certain gguf k-quant..
     # relevant info on the k-quant should be in the model config
     if 'gguf' in QUANTIZATION_METHOD:
-        assert QUANTIZATION_LEVEL in cfg.model.gguf_files.keys()
+        if RUNTIME == 'hugging_face':
+            assert QUANTIZATION_LEVEL in cfg.model.gguf_files.keys()
+        elif RUNTIME == 'ollama':
+            assert QUANTIZATION_LEVEL in cfg.model.ollama_files.keys()
         
-    EXPERIMENT_NAME = f'{MODEL_NAME}_{QUANTIZATION_METHOD}_{QUANTIZATION_LEVEL}_{DATASET_SPLIT}'
-
+    EXPERIMENT_NAME = f'{MODEL_NAME}_{QUANTIZATION_METHOD}_{QUANTIZATION_LEVEL}_{RUNTIME}_{DATASET_SPLIT}'
     log.info(f"EXPERIMENT NAME: {EXPERIMENT_NAME}")
-    #log.info(f"{cfg.model}")
  
     # --- Load Dataset ---
     dataset = DatasetLoader(DATASET_SPLIT=DATASET_SPLIT).build_dataset(); assert dataset != None
     log.info("Dataset ready.")
     clean_gpu()
-
     # --- Create Prompts ---
     all_prompts = create_prompts(dataset)
 
     # --- Load Model, Tokenizer ---
-    model, tokenizer = ModelLoader(model_family=MODEL_NAME, 
-                                   quantization_method=QUANTIZATION_METHOD,
-                                   quantization_level=QUANTIZATION_LEVEL,
-                                   base_hf_id=base_hf_id,
-                                   gguf_hf_id=gguf_hf_id,
-                                   gguf_fpath=gguf_fpath,
-                                   model_specific_tokenizer_kwargs=model_specific_tokenizer_kwargs).build_model_and_tokenizer()
-    assert model != None
-    assert tokenizer != None
-    log.info("SUCCESS! MODEL AND TOKENIZER LOADED")
-    # --- Construct HF Pipeline ---
-    classifier = pipeline(
-        'text-generation',
-        model=model,
-        tokenizer=tokenizer,
-        device_map="auto"
-    )
-
+    # Inference with HuggingFace runtime (AutoTokenizer.from_pretrained(...), AutoModelForCausalLM.from_pretrained(...))
+    if RUNTIME == 'hugging_face':
+        model, tokenizer = ModelLoader(model_family=MODEL_NAME, 
+                                       quantization_method=QUANTIZATION_METHOD,
+                                       quantization_level=QUANTIZATION_LEVEL,
+                                       base_hf_id=base_hf_id,
+                                       gguf_hf_id=gguf_hf_id,
+                                       gguf_fpath=gguf_fpath,
+                                       model_specific_tokenizer_kwargs=model_specific_tokenizer_kwargs).build_model_and_tokenizer()
+        assert model != None
+        assert tokenizer != None
+        # --- Construct HF Pipeline ---
+        classifier = pipeline(
+            'text-generation',
+            model=model,
+            tokenizer=tokenizer,
+            device_map="auto"
+        )
+        log.info("SUCCESS! MODEL AND TOKENIZER LOADED")
+    
+    # Inference with llama-cpp-python runtime ; dropping due to bad latency (~TTFT) results when testing on jnb ; could not load weights to GPU, and CPU inference latency was ~130[s] per prompt (ノ-_-)ノ ミ ┴┴
+    
     # --- Clear memory stats *before* inference, for acc. logging of GPU usage *during* inference ---
     gc.collect()
-    t.cuda.empty_cache()
-    t.cuda.reset_peak_memory_stats()
+    try:
+        t.cuda.empty_cache()
+        t.cuda.reset_peak_memory_stats()
+    except:
+        pass # perhaps device = 'cpu'
 
     # --- Inference --- todo: add more inference related metrics like latency, throughput?
-    outputs = classify_med_answers(prompts=all_prompts,
-                                   classifier=classifier,
-                                   tokenizer=tokenizer,
-                                   experiment_name=EXPERIMENT_NAME,
-                                   BATCH_SIZE=BATCH_SIZE,
-                                   MAX_NEW_TOKENS=MAX_NEW_TOKENS)
+    # Hugging Face Runtime
+    outputs = None
+    if RUNTIME == 'hugging_face':
+        outputs = classify_med_answers(prompts=all_prompts,
+                                       classifier=classifier,
+                                       tokenizer=tokenizer,
+                                       experiment_name=EXPERIMENT_NAME,
+                                       BATCH_SIZE=BATCH_SIZE,
+                                       MAX_NEW_TOKENS=MAX_NEW_TOKENS)
+
+    # Ollama Runtime
+    # ollama pull gguf_f_path
+    # i.e. ollama pull hf.co/mradermacher/Llama3-Med42-8B-GGUF:Q5_K_S
+    # ollama pull gemma:2b
+    # etc.. then pick model = "gemma:2b"
+    elif RUNTIME == 'ollama':
+        log.info(f"Downloading {OLLAMA_FILE} from HF")
+        ollama.pull(OLLAMA_FILE)
+        log.info(f"Download Complete!")
+        outputs, latencies = ollama_classify(prompts=all_prompts,
+                                             model=OLLAMA_FILE,
+                                             experiment_name=EXPERIMENT_NAME,
+                                             BATCH_SIZE=BATCH_SIZE,
+                                             MAX_NEW_TOKENS=MAX_NEW_TOKENS)
 
     # --- Log Peak GPU Memory Usage --- note: re-factor into function?
-    peak_memory_bytes = t.cuda.max_memory_allocated()
-    peak_memory_gb = peak_memory_bytes / (2**30) # 2^30B in one GB
-    log.info(f"Peak GPU Memory Allocated: {peak_memory_gb} GB")
+    peak_memory_gb = None
+    try:
+        peak_memory_bytes = t.cuda.max_memory_allocated() # not relevant for CPU
+        peak_memory_gb = peak_memory_bytes / (2**30) # 2^30B in one GB
+        log.info(f"Peak GPU Memory Allocated: {peak_memory_gb} GB")
+    except:
+        pass
     #print(f"Peak GPU Memory Allocated: {peak_memory_gb} GB")
 
     predictions, raw_outputs = extract_all_binary_predictions(outputs)
