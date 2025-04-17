@@ -75,8 +75,9 @@ class ModelLoader(AbstractModelLoader):
         #self.tokenizer = _build_tokenizer()
         #self.model = _build_model()
         #self.model_kwargs = model_kwargs
-            
+    
     def _get_tokenizer_kwargs(self):
+        """Get kwargs from config"""
         # default
         tokenizer_kwargs = {
             'trust_remote_code': True,
@@ -116,7 +117,8 @@ class ModelLoader(AbstractModelLoader):
         log.info(f"Loading tokenizer from: {tokenizer_path}")
         tokenizer_kwargs = self._get_tokenizer_kwargs()
         log.info(tokenizer_kwargs)
-        #tokenizer = AutoTokenizer.from_pretrained(tokenizer_path, **tokenizer_kwargs)
+
+        # Runtime == HF
         if self.quantization_method == 'gguf':
             try:
                 log.info("Attempting to build gguf tokenizer.")
@@ -128,6 +130,7 @@ class ModelLoader(AbstractModelLoader):
                 tokenizer_kwargs.pop('gguf_file')
                 #pass
         tokenizer = AutoTokenizer.from_pretrained(tokenizer_path, **tokenizer_kwargs)
+
         log.info("TOKENIZER BUILT!")
         log.info(type(tokenizer))
         #self.tokenizer = tokenizer
@@ -737,6 +740,10 @@ def run_experiment(cfg: DictConfig) -> None:
     dataset = DatasetLoader(DATASET_SPLIT=DATASET_SPLIT).build_dataset(); assert dataset != None
     log.info("Dataset ready.")
     clean_gpu()
+
+    # --- Create Prompts ---
+    all_prompts = create_prompts(dataset)
+
     # --- Load Model, Tokenizer ---
     model, tokenizer = ModelLoader(model_family=MODEL_NAME, 
                                    quantization_method=QUANTIZATION_METHOD,
@@ -748,10 +755,6 @@ def run_experiment(cfg: DictConfig) -> None:
     assert model != None
     assert tokenizer != None
     log.info("SUCCESS! MODEL AND TOKENIZER LOADED")
-    #quit()
-    # --- Create Prompts ---
-    all_prompts = create_prompts(dataset)
-
     # --- Construct HF Pipeline ---
     classifier = pipeline(
         'text-generation',
@@ -791,7 +794,7 @@ def run_experiment(cfg: DictConfig) -> None:
     
     # --- Create Plots ---
     log.info("--- Creating Plots ---")
-    create_and_save_plots(experiment_name, metrics_dict)
+    create_and_save_plots(EXPERIMENT_NAME, metrics_dict)
 
     # --- Save Results ---
     log.info("--- Saving Final Results to JSON ---")
