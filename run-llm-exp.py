@@ -25,10 +25,13 @@ from omegaconf import DictConfig, OmegaConf
 import hydra
 import subprocess
 from huggingface_hub import hf_hub_download
+from multiprocessing import Pool
+import pickle
 
 
 # --- Setup logging ---
 log = logging.getLogger(__name__)
+logging.getLogger("httpx").setLevel(logging.WARNING) # so we don't get spammed with [httpx] logs during ollama inference
 
 # --- Helper Classes/Functions ---
 class AbstractModelLoader(ABC):
@@ -341,6 +344,8 @@ def classify_med_answers(prompts, classifier, tokenizer, experiment_name: str, B
 # fcn group 2 -> combine into a class?
 def extract_prediction(generated_text):
     """Extract the '0' or '1' from generated text, in case model does not listen to instructions and adds other tokens"""
+    #log.info(generated_text)
+    #log.info(f"{[type(x) for x in generated_text]}")
     text = generated_text.strip()
     text_start = text[-10:]
     #print("text start: ", text_start)
@@ -354,7 +359,7 @@ def extract_prediction(generated_text):
         #print(f"Could not parse '0' or '1' from model output: {text}")
         return -1
         
-def extract_all_binary_predictions(outputs) -> Tuple[List[int], list]:
+def extract_all_binary_predictions(outputs, runtime='ollama') -> Tuple[List[int], list]:
     """
     for output in outputs:
         1. filter out original prompt, # b/c model output *includes the input prompt* as well as new generated text
@@ -364,24 +369,32 @@ def extract_all_binary_predictions(outputs) -> Tuple[List[int], list]:
     
     predictions = []
     raw_outputs = []
-    log.info("Processing Results.")
-    log.info(type(outputs))
-    for i, output in enumerate(outputs):
-        model_response = None
-        try:
-            full_chat = output[0]['generated_text'] # this INCLUDES the prompt ; we only want newly generated text
-            assistant_response_dict = full_chat[-1] # full_chat[0]: system, full_chat[1]: user, full_chat[2]: assistant
-            #print(assistant_response_dict)
+    log.info("Extracting Predictions From Model Responses.")
+
+    if runtime=='ollama':
+        for i, model_response in enumerate(outputs):
+            raw_outputs.append(model_response)
+            pred = extract_prediction(model_response)
+            predictions.append(pred)
+    else:
+        # runtime = HF ; qwen2.5 7B output
+        for i, output in enumerate(outputs):
             model_response = None
-            if assistant_response_dict['role'] == 'assistant':
-                model_response = assistant_response_dict['content']
-        except:
-            pass
-        
-        pred = extract_prediction(model_response)
-        predictions.append(pred)
-        raw_outputs.append(model_response) # store the raw '!!!!!' or '0' or '1'
-    log.info("Results Processed.")
+            try:
+                full_chat = output[0]['generated_text'] # this INCLUDES the prompt ; we only want newly generated text
+                assistant_response_dict = full_chat[-1] # full_chat[0]: system, full_chat[1]: user, full_chat[2]: assistant
+                #print(assistant_response_dict)
+                model_response = None
+                if assistant_response_dict['role'] == 'assistant':
+                    model_response = assistant_response_dict['content']
+            except:
+                pass
+            pred = extract_prediction(model_response)
+            predictions.append(pred)
+            raw_outputs.append(model_response) # store the raw '!!!!!' or '0' or '1'
+
+    
+    log.info("Predictions Extracted.")
     return predictions, raw_outputs
 
 # fcn group 3 -> combine into a class?
@@ -403,7 +416,8 @@ def get_hallucination_info(info_type: str, dataset, all_ground_truths: list[int]
     elif info_type == "category":
         return hallucination_category
 
-def process_results(dataset, predictions: list[int]) -> dict: # TODO: rename fcn to something less ambiguous（＾ｖ＾）
+# TODO: rename fcn to something less ambiguous（＾ｖ＾）
+def process_results(dataset, predictions: list[int]) -> dict:
     """
     # --- Assemble final results ---
     # example
@@ -427,6 +441,9 @@ def process_results(dataset, predictions: list[int]) -> dict: # TODO: rename fcn
     gt_pred_pairs = raw_gt_pred_pairs[valid_idxs] #filter_invalid_pairs(raw_gt_pred_pairs)
     valid_hal_difficulty = [raw_hallucination_difficulty[valid_idx] for valid_idx in valid_idxs]
     valid_hal_category = [raw_hallucination_category[valid_idx] for valid_idx in valid_idxs]
+
+    # include the ground truth a
+    
     valid_df = pd.DataFrame({
         'gt': [gt for (gt,pred) in gt_pred_pairs],
         'predictions': [pred for (gt,pred) in gt_pred_pairs],
@@ -436,10 +453,10 @@ def process_results(dataset, predictions: list[int]) -> dict: # TODO: rename fcn
 
     processed_results = {
         'all_ground_truths': all_ground_truths, 
-        'raw_gt_pred_pairs': raw_gt_pred_pairs,
+        'raw_gt_pred_pairs': raw_gt_pred_pairs, # tensor
         'raw_hallucination_difficulty': raw_hallucination_difficulty,
         'valid_idxs': valid_idxs,
-        'gt_pred_pairs': gt_pred_pairs,
+        'gt_pred_pairs': gt_pred_pairs, # tensor
         'valid_hal_difficulty': valid_hal_difficulty,
         'valid_hal_category': valid_hal_category,
         'valid_df': valid_df
@@ -522,6 +539,8 @@ def calculate_metrics(raw_gt_pred_pairs: list[tuple[int, int]], gt_pred_pairs: l
                          'Mechanism and Pathway Misattribution',
                          'Misinterpretation of #Question#',
                          'Methodological and Evidence Fabrication']
+        # ensures that all categories are represnted, but still does not prevent NaNs that could be produced by arithmetic done below
+        # using df.fillna() to address that
         for k in difficulty_keys:
             if k not in fn_difficulty_counts.keys():
                 fn_difficulty_counts[k] = 0
@@ -535,12 +554,15 @@ def calculate_metrics(raw_gt_pred_pairs: list[tuple[int, int]], gt_pred_pairs: l
                 tp_category_counts[k] = 0
     
         # plot fnr
-        fnr_difficulty = fn_difficulty_counts / (fn_difficulty_counts + tp_difficulty_counts)
-        fnr_category = fn_category_counts / (fn_category_counts + tp_category_counts) # todo: modify to account to NaNs
+        fnr_difficulty = (fn_difficulty_counts / (fn_difficulty_counts + tp_difficulty_counts)).fillna(0) # nan vals can't be serialized to JSON..
+        fnr_category = (fn_category_counts / (fn_category_counts + tp_category_counts)).fillna(0) # so we replace with 0 here, for later
     
         # plot tpr
-        tpr_difficulty = tp_difficulty_counts / (tp_difficulty_counts + fn_difficulty_counts)
-        tpr_category = tp_category_counts / (tp_category_counts.add(fn_category_counts, fill_value=0))
+        tpr_difficulty = (tp_difficulty_counts / (tp_difficulty_counts + fn_difficulty_counts)).fillna(0)
+        tpr_category = (tp_category_counts / (tp_category_counts.add(fn_category_counts, fill_value=0))).fillna(0)
+
+        #log.info(type(fnr_difficulty))
+        #log.info(fnr_difficulty)
         
         # overall metrics: accuracy, precision, recall, f1 score
         accuracy = (TP + TN) / (TP + TN + FP + FN)
@@ -555,6 +577,7 @@ def calculate_metrics(raw_gt_pred_pairs: list[tuple[int, int]], gt_pred_pairs: l
     metrics_dict = {
         'cm': cm,
         'accuracy': accuracy,
+        'precision': precision,
         'recall': recall,
         'f1-score': f1,
         'support': support,
@@ -570,7 +593,7 @@ def calculate_metrics(raw_gt_pred_pairs: list[tuple[int, int]], gt_pred_pairs: l
     }
     return metrics_dict
 
-def create_and_save_plots(experiment_name: str, metrics_dict: dict, output_dir:str) -> None:
+def create_and_save_plots(experiment_name: str, metrics_dict: dict, output_dir:str=None) -> None:
     """
     Creates Plots for LLM Hallucination Detection FNR/TPR broken down by difficulty/category
     Plots are saved, as per the desired directory structure indicated below:
@@ -584,7 +607,8 @@ def create_and_save_plots(experiment_name: str, metrics_dict: dict, output_dir:s
           perf_by_difficulty_qwen_uncompressed_pqa_labeled.png
     """
     # --- Create output folder if it does not exist ---
-    output_dir = os.path.join(os.getcwd(), 'plots', f'{experiment_name}')
+    if output_dir == None:
+        output_dir = os.path.join(os.getcwd(), 'plots', f'{experiment_name}')
     os.makedirs((output_dir),exist_ok=True)
     
     # --- Plot 1: FNR/TPR by Diffictuly ---
@@ -691,18 +715,36 @@ def create_and_save_plots(experiment_name: str, metrics_dict: dict, output_dir:s
     except Exception as e:
         print(f"Failed to create/save confusion matrix plot: {e}")
 
+def generate_latency_report(latencies: list):
+    latencies = np.array(latencies)
+    latency_mean = latencies.mean()
+    latency_std_dev = latencies.std()
+    latency_var = latencies.var()
+    total_exp_inf_time_sec = latencies.sum()
+    throughput_prompts_per_sec =  latencies.shape[0] / total_exp_inf_time_sec
+    latency_report = {
+        'latencies': latencies,
+        'latency_mean': latency_mean,
+        'latency_std_dev': latency_std_dev,
+        'latency_var': latency_var,
+        'total_exp_inference_time_sec': total_exp_inf_time_sec,
+        'throughput_prompts_per_sec': throughput_prompts_per_sec
+    }
+    return latency_report
+
+# TODO: add (better) exception handling
 def write_results_to_json(EXPERIMENT_NAME, results: dict = None, output_dir:str = None):
     assert EXPERIMENT_NAME != None; assert results != None
     
     if output_dir == None:
         # make results folder, if it does not exist
-        output_dir = os.path.join(os.getcwd(), 'results')
-        os.makedirs(output_dir, exist_ok=True)
+        output_dir = os.path.join(os.getcwd(), 'results', f'{EXPERIMENT_NAME}')
+    os.makedirs(output_dir, exist_ok=True)
     
     out_file = os.path.join(output_dir, f"results_{EXPERIMENT_NAME}.json")
     print(f"Saving results to {out_file}.")
     with open(out_file, 'w') as f:
-        json.dump(results, f, indent=4)
+        json.dump(results, f, indent=4) # default: 0 ; value given to anything that can't be serialized i.e. nan
 
     log.info("Save complete.")
     
@@ -713,7 +755,7 @@ def write_results_to_txt(EXPERIMENT_NAME, results: dict = None, output_dir:str =
     if output_dir == None:
         # make results folder, if it does not exist
         output_dir = os.path.join(os.getcwd(), 'results')
-        os.makedirs(output_dir, exist_ok=True)
+    os.makedirs(output_dir, exist_ok=True)
     
     pprint.pp((results))
     out_file = os.path.join(output_dir, f"results_{EXPERIMENT_NAME}.txt")
@@ -733,7 +775,7 @@ def run_experiment(cfg: DictConfig) -> None:
     DATASET_NAME = cfg.dataset.name
     # pass to DatasetLoader
     DATASET_SPLIT = cfg.dataset.split
-    #MAX_SAMPLES = cfg.max_samples
+    MAX_SAMPLES = cfg.max_samples
     
     # pass to ModelLoader ; change/modify now that we're using ollama for inference
     RUNTIME = cfg.runtime.name
@@ -772,7 +814,7 @@ def run_experiment(cfg: DictConfig) -> None:
     log.info(f"EXPERIMENT NAME: {EXPERIMENT_NAME}")
  
     # --- Load Dataset ---
-    dataset = DatasetLoader(DATASET_SPLIT=DATASET_SPLIT).build_dataset(); assert dataset != None
+    dataset = DatasetLoader(MAX_SAMPLES=MAX_SAMPLES, DATASET_SPLIT=DATASET_SPLIT).build_dataset(); assert dataset != None
     log.info("Dataset ready.")
     clean_gpu()
     # --- Create Prompts ---
@@ -820,11 +862,6 @@ def run_experiment(cfg: DictConfig) -> None:
                                        BATCH_SIZE=BATCH_SIZE,
                                        MAX_NEW_TOKENS=MAX_NEW_TOKENS)
 
-    # Ollama Runtime
-    # ollama pull gguf_f_path
-    # i.e. ollama pull hf.co/mradermacher/Llama3-Med42-8B-GGUF:Q5_K_S
-    # ollama pull gemma:2b
-    # etc.. then pick model = "gemma:2b"
     elif RUNTIME == 'ollama':
         log.info(f"Downloading {OLLAMA_FILE} from HF")
         ollama.pull(OLLAMA_FILE)
@@ -834,8 +871,9 @@ def run_experiment(cfg: DictConfig) -> None:
                                              experiment_name=EXPERIMENT_NAME,
                                              BATCH_SIZE=BATCH_SIZE,
                                              MAX_NEW_TOKENS=MAX_NEW_TOKENS)
-
+    
     # --- Log Peak GPU Memory Usage --- note: re-factor into function?
+    # Hardware Performance
     peak_memory_gb = None
     try:
         peak_memory_bytes = t.cuda.max_memory_allocated() # not relevant for CPU
@@ -843,17 +881,21 @@ def run_experiment(cfg: DictConfig) -> None:
         log.info(f"Peak GPU Memory Allocated: {peak_memory_gb} GB")
     except:
         pass
-    #print(f"Peak GPU Memory Allocated: {peak_memory_gb} GB")
 
+    # --- Extract Prediction ---
     predictions, raw_outputs = extract_all_binary_predictions(outputs)
 
-    # --- Compute Metrics (fnr, tpr, acc, prec, rec, f1, abstention rate) ---
+    # --- Compute Model Performance Metrics (fnr, tpr, acc, prec, rec, f1, abstention rate) ---
+    log.info(" --- Computing Model Performance Metrics --- ")
     processed_results = process_results(dataset, predictions)
-
+    log.info("Processed Results")
+    log.info(pprint.pp(processed_results))
+    
     metrics_dict = calculate_metrics(processed_results['raw_gt_pred_pairs'],
                                      processed_results['gt_pred_pairs'],
                                      processed_results['valid_df'])
-    log.info(metrics_dict)
+    log.info("Metrics Dict")
+    log.info(pprint.pp(metrics_dict))
     
     # --- Create Plots ---
     log.info("--- Creating Plots ---")
@@ -861,13 +903,41 @@ def run_experiment(cfg: DictConfig) -> None:
 
     # --- Save Results ---
     log.info("--- Saving Final Results to JSON ---")
-    #EXPERIMENT_NAME = EXPERIMENT_NAME.split('/')[-1]
 
+    latency_report = None
+    if RUNTIME == 'ollama':
+        latency_report = generate_latency_report(latencies)
+        for k,v in latency_report.items():
+            if type(v) == np.ndarray:
+                latency_report[k] = latency_report[k].tolist()
+        #results['metrics']['inference_latencies'] = latencies.tolist()
+        #results['metrics'].update(generate_latency_report(latencies))
+    
+    log.info("Preparing results into a serializable format")
+    #log.info({k:type(v) for k,v in processed_results.items()})
+    pop_keys = []
+    for k,v in processed_results.items():
+        if type(v) == t.Tensor:
+            processed_results[k] = processed_results[k].tolist()
+        elif type(v) == pd.DataFrame:
+            output_dir = os.path.join(os.getcwd(), 'results', f'{EXPERIMENT_NAME}')
+            os.makedirs(output_dir, exist_ok=True)
+            output_pth = os.path.join(output_dir, f'{k}_{EXPERIMENT_NAME}.csv')
+            processed_results[k].to_csv(output_pth)
+            #pickle.dump(processed_results[k], open(output_pth, 'wb'))
+            #processed_results[k].to_pickle(f'{k}_{EXPERIMENT_NAME}.pkl # tried pickle ; but resulting file could not be opened
+            pop_keys.append(k)
+        elif type(v) == np.ndarray:
+            processed_results[k] = processed_results[k].tolist()
+    keys_popped = [processed_results.pop(k) for k in pop_keys]
+    #log.info({k:type(v) for k,v in processed_results.items()})
+    
     results = {
         'experiment_name': EXPERIMENT_NAME,
         'semi-processed_results': processed_results,
         'metrics': {
             'gpu_peak_memory_gb': peak_memory_gb,
+            'latency_report': latency_report,
             'cm': metrics_dict['cm'].tolist(),
             'accuracy': metrics_dict['accuracy'],
             'precision': metrics_dict['precision'],
@@ -885,6 +955,9 @@ def run_experiment(cfg: DictConfig) -> None:
             'tpr_category': metrics_dict['tpr_category'].to_dict()
         }
     }
+    
+    #log.info(pprint.pp(results))
+    
     write_results_to_json(EXPERIMENT_NAME, results)
     log.info("Results Saved! Experiment is Complete.")
 

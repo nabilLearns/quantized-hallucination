@@ -1,0 +1,370 @@
+{
+    "experiment_name": "gemma3-1b-it_gguf_q4_k_m_ollama_pqa_labeled",
+    "semi-processed_results": {
+        "all_ground_truths": [
+            1,
+            0,
+            1,
+            0,
+            1,
+            0,
+            1,
+            0,
+            1,
+            0,
+            1,
+            0,
+            1,
+            0,
+            1,
+            0,
+            1,
+            0,
+            1,
+            0
+        ],
+        "raw_gt_pred_pairs": [
+            [
+                1,
+                0
+            ],
+            [
+                0,
+                0
+            ],
+            [
+                1,
+                0
+            ],
+            [
+                0,
+                0
+            ],
+            [
+                1,
+                0
+            ],
+            [
+                0,
+                0
+            ],
+            [
+                1,
+                0
+            ],
+            [
+                0,
+                0
+            ],
+            [
+                1,
+                0
+            ],
+            [
+                0,
+                0
+            ],
+            [
+                1,
+                0
+            ],
+            [
+                0,
+                0
+            ],
+            [
+                1,
+                0
+            ],
+            [
+                0,
+                0
+            ],
+            [
+                1,
+                0
+            ],
+            [
+                0,
+                0
+            ],
+            [
+                1,
+                0
+            ],
+            [
+                0,
+                0
+            ],
+            [
+                1,
+                0
+            ],
+            [
+                0,
+                0
+            ]
+        ],
+        "raw_hallucination_difficulty": [
+            "medium",
+            null,
+            "hard",
+            null,
+            "hard",
+            null,
+            "easy",
+            null,
+            "hard",
+            null,
+            "medium",
+            null,
+            "easy",
+            null,
+            "hard",
+            null,
+            "hard",
+            null,
+            "hard",
+            null
+        ],
+        "valid_idxs": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19
+        ],
+        "gt_pred_pairs": [
+            [
+                1,
+                0
+            ],
+            [
+                0,
+                0
+            ],
+            [
+                1,
+                0
+            ],
+            [
+                0,
+                0
+            ],
+            [
+                1,
+                0
+            ],
+            [
+                0,
+                0
+            ],
+            [
+                1,
+                0
+            ],
+            [
+                0,
+                0
+            ],
+            [
+                1,
+                0
+            ],
+            [
+                0,
+                0
+            ],
+            [
+                1,
+                0
+            ],
+            [
+                0,
+                0
+            ],
+            [
+                1,
+                0
+            ],
+            [
+                0,
+                0
+            ],
+            [
+                1,
+                0
+            ],
+            [
+                0,
+                0
+            ],
+            [
+                1,
+                0
+            ],
+            [
+                0,
+                0
+            ],
+            [
+                1,
+                0
+            ],
+            [
+                0,
+                0
+            ]
+        ],
+        "valid_hal_difficulty": [
+            "medium",
+            null,
+            "hard",
+            null,
+            "hard",
+            null,
+            "easy",
+            null,
+            "hard",
+            null,
+            "medium",
+            null,
+            "easy",
+            null,
+            "hard",
+            null,
+            "hard",
+            null,
+            "hard",
+            null
+        ],
+        "valid_hal_category": [
+            "Mechanism and Pathway Misattribution",
+            null,
+            "Incomplete Information",
+            null,
+            "Misinterpretation of #Question#",
+            null,
+            "Misinterpretation of #Question#",
+            null,
+            "Incomplete Information",
+            null,
+            "Misinterpretation of #Question#",
+            null,
+            "Misinterpretation of #Question#",
+            null,
+            "Incomplete Information",
+            null,
+            "Misinterpretation of #Question#",
+            null,
+            "Incomplete Information",
+            null
+        ]
+    },
+    "metrics": {
+        "gpu_peak_memory_gb": 0.0,
+        "latency_report": {
+            "latencies": [
+                10.540543794631958,
+                6.506270408630371,
+                6.217616081237793,
+                7.893737316131592,
+                4.739822864532471,
+                5.066882371902466,
+                6.082602500915527,
+                6.217098712921143,
+                5.68454647064209,
+                7.912240028381348,
+                5.7798144817352295,
+                5.317305326461792,
+                5.656002521514893,
+                6.151135206222534,
+                8.010204076766968,
+                6.166967391967773,
+                5.214432239532471,
+                4.806032180786133,
+                7.125415563583374,
+                7.498415470123291
+            ],
+            "latency_mean": 6.429354250431061,
+            "latency_std_dev": 1.366884049931337,
+            "latency_var": 1.8683720059566937,
+            "total_exp_inference_time_sec": 128.58708500862122,
+            "throughput_prompts_per_sec": 0.15553661550581915
+        },
+        "cm": [
+            [
+                10,
+                0
+            ],
+            [
+                10,
+                0
+            ]
+        ],
+        "accuracy": 0.5,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1-score": 0.0,
+        "support": null,
+        "abstention_rate": 0.0,
+        "fn_difficulty_counts": {
+            "hard": 6,
+            "medium": 2,
+            "easy": 2
+        },
+        "fn_category_counts": {
+            "Misinterpretation of #Question#": 5,
+            "Incomplete Information": 4,
+            "Mechanism and Pathway Misattribution": 1,
+            "Methodological and Evidence Fabrication": 0
+        },
+        "tp_difficulty_counts": {
+            "hard": 0,
+            "medium": 0,
+            "easy": 0
+        },
+        "tp_category_counts": {
+            "Incomplete Information": 0,
+            "Mechanism and Pathway Misattribution": 0,
+            "Misinterpretation of #Question#": 0
+        },
+        "fnr_difficulty": {
+            "hard": 1.0,
+            "medium": 1.0,
+            "easy": 1.0
+        },
+        "fnr_category": {
+            "Incomplete Information": 1.0,
+            "Mechanism and Pathway Misattribution": 1.0,
+            "Methodological and Evidence Fabrication": 0.0,
+            "Misinterpretation of #Question#": 1.0
+        },
+        "tpr_difficulty": {
+            "hard": 0.0,
+            "medium": 0.0,
+            "easy": 0.0
+        },
+        "tpr_category": {
+            "Incomplete Information": 0.0,
+            "Mechanism and Pathway Misattribution": 0.0,
+            "Methodological and Evidence Fabrication": 0.0,
+            "Misinterpretation of #Question#": 0.0
+        }
+    }
+}

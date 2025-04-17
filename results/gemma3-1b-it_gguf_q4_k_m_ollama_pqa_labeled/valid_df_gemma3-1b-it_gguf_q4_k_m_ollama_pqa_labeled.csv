@@ -1,0 +1,21 @@
+,gt,predictions,difficulty,category
+0,tensor(1),tensor(0),medium,Mechanism and Pathway Misattribution
+1,tensor(0),tensor(0),,
+2,tensor(1),tensor(0),hard,Incomplete Information
+3,tensor(0),tensor(0),,
+4,tensor(1),tensor(0),hard,Misinterpretation of #Question#
+5,tensor(0),tensor(0),,
+6,tensor(1),tensor(0),easy,Misinterpretation of #Question#
+7,tensor(0),tensor(0),,
+8,tensor(1),tensor(0),hard,Incomplete Information
+9,tensor(0),tensor(0),,
+10,tensor(1),tensor(0),medium,Misinterpretation of #Question#
+11,tensor(0),tensor(0),,
+12,tensor(1),tensor(0),easy,Misinterpretation of #Question#
+13,tensor(0),tensor(0),,
+14,tensor(1),tensor(0),hard,Incomplete Information
+15,tensor(0),tensor(0),,
+16,tensor(1),tensor(0),hard,Misinterpretation of #Question#
+17,tensor(0),tensor(0),,
+18,tensor(1),tensor(0),hard,Incomplete Information
+19,tensor(0),tensor(0),,
