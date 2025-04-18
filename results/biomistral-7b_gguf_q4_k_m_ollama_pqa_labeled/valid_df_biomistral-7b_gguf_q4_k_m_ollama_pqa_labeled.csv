@@ -1,0 +1,1397 @@
+,gt,predictions,difficulty,category
+0,tensor(1),tensor(1),medium,Mechanism and Pathway Misattribution
+1,tensor(1),tensor(0),hard,Incomplete Information
+2,tensor(0),tensor(1),,
+3,tensor(1),tensor(1),hard,Incomplete Information
+4,tensor(0),tensor(0),,
+5,tensor(1),tensor(1),medium,Misinterpretation of #Question#
+6,tensor(0),tensor(0),,
+7,tensor(1),tensor(1),hard,Incomplete Information
+8,tensor(0),tensor(0),,
+9,tensor(1),tensor(0),hard,Misinterpretation of #Question#
+10,tensor(0),tensor(1),,
+11,tensor(1),tensor(0),hard,Incomplete Information
+12,tensor(0),tensor(0),,
+13,tensor(1),tensor(1),medium,Misinterpretation of #Question#
+14,tensor(0),tensor(0),,
+15,tensor(1),tensor(0),hard,Misinterpretation of #Question#
+16,tensor(1),tensor(0),easy,Misinterpretation of #Question#
+17,tensor(0),tensor(1),,
+18,tensor(0),tensor(1),,
+19,tensor(1),tensor(1),easy,Incomplete Information
+20,tensor(0),tensor(0),,
+21,tensor(0),tensor(0),,
+22,tensor(1),tensor(1),hard,Misinterpretation of #Question#
+23,tensor(1),tensor(0),medium,Misinterpretation of #Question#
+24,tensor(0),tensor(0),,
+25,tensor(1),tensor(0),hard,Misinterpretation of #Question#
+26,tensor(0),tensor(1),,
+27,tensor(1),tensor(1),hard,Misinterpretation of #Question#
+28,tensor(0),tensor(0),,
+29,tensor(0),tensor(1),,
+30,tensor(0),tensor(0),,
+31,tensor(0),tensor(0),,
+32,tensor(1),tensor(0),hard,Incomplete Information
+33,tensor(0),tensor(0),,
+34,tensor(0),tensor(1),,
+35,tensor(1),tensor(0),medium,Misinterpretation of #Question#
+36,tensor(0),tensor(1),,
+37,tensor(1),tensor(1),easy,Misinterpretation of #Question#
+38,tensor(0),tensor(0),,
+39,tensor(1),tensor(1),medium,Misinterpretation of #Question#
+40,tensor(0),tensor(0),,
+41,tensor(1),tensor(0),hard,Misinterpretation of #Question#
+42,tensor(0),tensor(0),,
+43,tensor(1),tensor(1),hard,Incomplete Information
+44,tensor(0),tensor(1),,
+45,tensor(1),tensor(1),hard,Misinterpretation of #Question#
+46,tensor(0),tensor(1),,
+47,tensor(1),tensor(1),easy,Misinterpretation of #Question#
+48,tensor(0),tensor(1),,
+49,tensor(1),tensor(1),easy,Incomplete Information
+50,tensor(0),tensor(0),,
+51,tensor(1),tensor(1),medium,Mechanism and Pathway Misattribution
+52,tensor(0),tensor(0),,
+53,tensor(1),tensor(0),hard,Misinterpretation of #Question#
+54,tensor(0),tensor(1),,
+55,tensor(1),tensor(1),hard,Misinterpretation of #Question#
+56,tensor(0),tensor(0),,
+57,tensor(1),tensor(0),hard,Misinterpretation of #Question#
+58,tensor(0),tensor(1),,
+59,tensor(1),tensor(1),easy,Misinterpretation of #Question#
+60,tensor(1),tensor(0),hard,Incomplete Information
+61,tensor(0),tensor(0),,
+62,tensor(1),tensor(1),hard,Misinterpretation of #Question#
+63,tensor(1),tensor(1),easy,Misinterpretation of #Question#
+64,tensor(0),tensor(1),,
+65,tensor(1),tensor(0),hard,Misinterpretation of #Question#
+66,tensor(0),tensor(0),,
+67,tensor(1),tensor(1),hard,Misinterpretation of #Question#
+68,tensor(1),tensor(1),hard,Misinterpretation of #Question#
+69,tensor(1),tensor(0),hard,Misinterpretation of #Question#
+70,tensor(0),tensor(1),,
+71,tensor(1),tensor(1),hard,Misinterpretation of #Question#
+72,tensor(0),tensor(1),,
+73,tensor(1),tensor(1),medium,Incomplete Information
+74,tensor(0),tensor(0),,
+75,tensor(1),tensor(0),hard,Methodological and Evidence Fabrication
+76,tensor(0),tensor(0),,
+77,tensor(0),tensor(1),,
+78,tensor(1),tensor(1),hard,Misinterpretation of #Question#
+79,tensor(0),tensor(1),,
+80,tensor(0),tensor(1),,
+81,tensor(1),tensor(1),medium,Incomplete Information
+82,tensor(0),tensor(0),,
+83,tensor(1),tensor(1),easy,Misinterpretation of #Question#
+84,tensor(0),tensor(1),,
+85,tensor(1),tensor(0),medium,Misinterpretation of #Question#
+86,tensor(0),tensor(1),,
+87,tensor(1),tensor(1),medium,Misinterpretation of #Question#
+88,tensor(0),tensor(0),,
+89,tensor(0),tensor(0),,
+90,tensor(1),tensor(1),easy,Mechanism and Pathway Misattribution
+91,tensor(0),tensor(0),,
+92,tensor(1),tensor(1),hard,Misinterpretation of #Question#
+93,tensor(0),tensor(1),,
+94,tensor(1),tensor(1),medium,Incomplete Information
+95,tensor(0),tensor(0),,
+96,tensor(1),tensor(0),hard,Misinterpretation of #Question#
+97,tensor(1),tensor(1),hard,Misinterpretation of #Question#
+98,tensor(1),tensor(0),easy,Incomplete Information
+99,tensor(0),tensor(1),,
+100,tensor(0),tensor(1),,
+101,tensor(1),tensor(1),hard,Misinterpretation of #Question#
+102,tensor(0),tensor(1),,
+103,tensor(1),tensor(1),easy,Incomplete Information
+104,tensor(0),tensor(0),,
+105,tensor(1),tensor(0),hard,Incomplete Information
+106,tensor(0),tensor(0),,
+107,tensor(1),tensor(1),medium,Misinterpretation of #Question#
+108,tensor(1),tensor(0),hard,Misinterpretation of #Question#
+109,tensor(0),tensor(0),,
+110,tensor(1),tensor(0),medium,Mechanism and Pathway Misattribution
+111,tensor(0),tensor(0),,
+112,tensor(1),tensor(0),easy,Misinterpretation of #Question#
+113,tensor(0),tensor(1),,
+114,tensor(0),tensor(1),,
+115,tensor(1),tensor(1),easy,Misinterpretation of #Question#
+116,tensor(0),tensor(1),,
+117,tensor(0),tensor(1),,
+118,tensor(1),tensor(0),hard,Misinterpretation of #Question#
+119,tensor(0),tensor(0),,
+120,tensor(0),tensor(0),,
+121,tensor(0),tensor(0),,
+122,tensor(0),tensor(0),,
+123,tensor(0),tensor(0),,
+124,tensor(1),tensor(1),medium,Misinterpretation of #Question#
+125,tensor(0),tensor(0),,
+126,tensor(1),tensor(1),medium,Misinterpretation of #Question#
+127,tensor(0),tensor(1),,
+128,tensor(1),tensor(1),hard,Misinterpretation of #Question#
+129,tensor(0),tensor(0),,
+130,tensor(1),tensor(1),medium,Misinterpretation of #Question#
+131,tensor(0),tensor(1),,
+132,tensor(0),tensor(1),,
+133,tensor(1),tensor(1),hard,Misinterpretation of #Question#
+134,tensor(0),tensor(1),,
+135,tensor(1),tensor(1),medium,Misinterpretation of #Question#
+136,tensor(0),tensor(1),,
+137,tensor(1),tensor(0),easy,Misinterpretation of #Question#
+138,tensor(0),tensor(1),,
+139,tensor(1),tensor(0),easy,Misinterpretation of #Question#
+140,tensor(0),tensor(0),,
+141,tensor(1),tensor(0),hard,Incomplete Information
+142,tensor(0),tensor(1),,
+143,tensor(1),tensor(1),medium,Incomplete Information
+144,tensor(1),tensor(1),hard,Misinterpretation of #Question#
+145,tensor(1),tensor(0),hard,Misinterpretation of #Question#
+146,tensor(0),tensor(0),,
+147,tensor(1),tensor(1),easy,Misinterpretation of #Question#
+148,tensor(0),tensor(1),,
+149,tensor(1),tensor(1),hard,Misinterpretation of #Question#
+150,tensor(0),tensor(0),,
+151,tensor(1),tensor(1),easy,Misinterpretation of #Question#
+152,tensor(0),tensor(0),,
+153,tensor(1),tensor(1),hard,Misinterpretation of #Question#
+154,tensor(1),tensor(1),hard,Misinterpretation of #Question#
+155,tensor(0),tensor(1),,
+156,tensor(1),tensor(0),hard,Misinterpretation of #Question#
+157,tensor(0),tensor(0),,
+158,tensor(1),tensor(0),hard,Misinterpretation of #Question#
+159,tensor(0),tensor(1),,
+160,tensor(0),tensor(0),,
+161,tensor(0),tensor(1),,
+162,tensor(1),tensor(1),medium,Misinterpretation of #Question#
+163,tensor(0),tensor(0),,
+164,tensor(0),tensor(0),,
+165,tensor(1),tensor(1),easy,Incomplete Information
+166,tensor(1),tensor(1),easy,Misinterpretation of #Question#
+167,tensor(1),tensor(0),easy,Incomplete Information
+168,tensor(0),tensor(0),,
+169,tensor(1),tensor(1),easy,Misinterpretation of #Question#
+170,tensor(0),tensor(1),,
+171,tensor(1),tensor(1),hard,Misinterpretation of #Question#
+172,tensor(1),tensor(0),hard,Misinterpretation of #Question#
+173,tensor(0),tensor(0),,
+174,tensor(1),tensor(0),easy,Incomplete Information
+175,tensor(0),tensor(0),,
+176,tensor(1),tensor(0),easy,Misinterpretation of #Question#
+177,tensor(1),tensor(1),easy,Misinterpretation of #Question#
+178,tensor(1),tensor(1),hard,Misinterpretation of #Question#
+179,tensor(1),tensor(0),hard,Misinterpretation of #Question#
+180,tensor(0),tensor(1),,
+181,tensor(1),tensor(1),easy,Misinterpretation of #Question#
+182,tensor(0),tensor(0),,
+183,tensor(0),tensor(0),,
+184,tensor(1),tensor(1),hard,Misinterpretation of #Question#
+185,tensor(0),tensor(0),,
+186,tensor(1),tensor(1),hard,Misinterpretation of #Question#
+187,tensor(1),tensor(1),hard,Incomplete Information
+188,tensor(0),tensor(0),,
+189,tensor(1),tensor(0),hard,Misinterpretation of #Question#
+190,tensor(0),tensor(0),,
+191,tensor(1),tensor(0),medium,Misinterpretation of #Question#
+192,tensor(1),tensor(0),medium,Mechanism and Pathway Misattribution
+193,tensor(0),tensor(0),,
+194,tensor(1),tensor(1),medium,Mechanism and Pathway Misattribution
+195,tensor(1),tensor(0),hard,Misinterpretation of #Question#
+196,tensor(0),tensor(0),,
+197,tensor(1),tensor(0),hard,Misinterpretation of #Question#
+198,tensor(0),tensor(0),,
+199,tensor(1),tensor(1),medium,Misinterpretation of #Question#
+200,tensor(1),tensor(0),hard,Incomplete Information
+201,tensor(0),tensor(1),,
+202,tensor(1),tensor(0),medium,Misinterpretation of #Question#
+203,tensor(0),tensor(1),,
+204,tensor(1),tensor(0),easy,Incomplete Information
+205,tensor(0),tensor(0),,
+206,tensor(1),tensor(0),medium,Misinterpretation of #Question#
+207,tensor(0),tensor(0),,
+208,tensor(0),tensor(1),,
+209,tensor(1),tensor(1),medium,Misinterpretation of #Question#
+210,tensor(1),tensor(0),medium,Misinterpretation of #Question#
+211,tensor(0),tensor(0),,
+212,tensor(1),tensor(1),easy,Incomplete Information
+213,tensor(1),tensor(1),easy,Misinterpretation of #Question#
+214,tensor(0),tensor(0),,
+215,tensor(1),tensor(1),hard,Misinterpretation of #Question#
+216,tensor(1),tensor(0),easy,Incomplete Information
+217,tensor(1),tensor(1),hard,Incomplete Information
+218,tensor(1),tensor(0),hard,Misinterpretation of #Question#
+219,tensor(0),tensor(0),,
+220,tensor(1),tensor(0),hard,Misinterpretation of #Question#
+221,tensor(0),tensor(0),,
+222,tensor(0),tensor(1),,
+223,tensor(1),tensor(1),medium,Misinterpretation of #Question#
+224,tensor(1),tensor(0),easy,Misinterpretation of #Question#
+225,tensor(0),tensor(1),,
+226,tensor(0),tensor(1),,
+227,tensor(0),tensor(0),,
+228,tensor(1),tensor(1),hard,Incomplete Information
+229,tensor(0),tensor(0),,
+230,tensor(1),tensor(0),easy,Misinterpretation of #Question#
+231,tensor(0),tensor(0),,
+232,tensor(1),tensor(1),easy,Incomplete Information
+233,tensor(0),tensor(0),,
+234,tensor(1),tensor(1),medium,Misinterpretation of #Question#
+235,tensor(0),tensor(0),,
+236,tensor(1),tensor(1),easy,Misinterpretation of #Question#
+237,tensor(0),tensor(1),,
+238,tensor(1),tensor(1),easy,Misinterpretation of #Question#
+239,tensor(0),tensor(0),,
+240,tensor(1),tensor(1),easy,Misinterpretation of #Question#
+241,tensor(0),tensor(0),,
+242,tensor(0),tensor(1),,
+243,tensor(1),tensor(0),hard,Misinterpretation of #Question#
+244,tensor(0),tensor(0),,
+245,tensor(0),tensor(1),,
+246,tensor(1),tensor(0),medium,Misinterpretation of #Question#
+247,tensor(0),tensor(1),,
+248,tensor(1),tensor(0),hard,Misinterpretation of #Question#
+249,tensor(0),tensor(1),,
+250,tensor(1),tensor(1),easy,Misinterpretation of #Question#
+251,tensor(0),tensor(1),,
+252,tensor(1),tensor(1),hard,Incomplete Information
+253,tensor(0),tensor(0),,
+254,tensor(1),tensor(1),medium,Incomplete Information
+255,tensor(0),tensor(0),,
+256,tensor(1),tensor(1),easy,Misinterpretation of #Question#
+257,tensor(0),tensor(0),,
+258,tensor(1),tensor(0),hard,Incomplete Information
+259,tensor(1),tensor(0),easy,Misinterpretation of #Question#
+260,tensor(0),tensor(0),,
+261,tensor(1),tensor(1),medium,Misinterpretation of #Question#
+262,tensor(0),tensor(0),,
+263,tensor(1),tensor(0),easy,Incomplete Information
+264,tensor(0),tensor(1),,
+265,tensor(0),tensor(0),,
+266,tensor(1),tensor(0),medium,Misinterpretation of #Question#
+267,tensor(0),tensor(0),,
+268,tensor(1),tensor(1),hard,Misinterpretation of #Question#
+269,tensor(1),tensor(0),medium,Misinterpretation of #Question#
+270,tensor(1),tensor(1),hard,Misinterpretation of #Question#
+271,tensor(0),tensor(1),,
+272,tensor(1),tensor(0),medium,Misinterpretation of #Question#
+273,tensor(0),tensor(1),,
+274,tensor(1),tensor(0),hard,Misinterpretation of #Question#
+275,tensor(0),tensor(0),,
+276,tensor(1),tensor(0),hard,Incomplete Information
+277,tensor(0),tensor(0),,
+278,tensor(1),tensor(1),hard,Misinterpretation of #Question#
+279,tensor(1),tensor(1),easy,Misinterpretation of #Question#
+280,tensor(1),tensor(0),medium,Incomplete Information
+281,tensor(0),tensor(1),,
+282,tensor(1),tensor(0),hard,Incomplete Information
+283,tensor(0),tensor(0),,
+284,tensor(1),tensor(1),hard,Misinterpretation of #Question#
+285,tensor(0),tensor(1),,
+286,tensor(1),tensor(1),hard,Misinterpretation of #Question#
+287,tensor(0),tensor(1),,
+288,tensor(1),tensor(0),hard,Misinterpretation of #Question#
+289,tensor(0),tensor(0),,
+290,tensor(1),tensor(1),hard,Misinterpretation of #Question#
+291,tensor(0),tensor(1),,
+292,tensor(1),tensor(1),medium,Misinterpretation of #Question#
+293,tensor(0),tensor(1),,
+294,tensor(1),tensor(0),hard,Misinterpretation of #Question#
+295,tensor(0),tensor(1),,
+296,tensor(1),tensor(1),medium,Misinterpretation of #Question#
+297,tensor(0),tensor(1),,
+298,tensor(0),tensor(0),,
+299,tensor(1),tensor(0),medium,Misinterpretation of #Question#
+300,tensor(0),tensor(1),,
+301,tensor(1),tensor(1),hard,Incomplete Information
+302,tensor(0),tensor(1),,
+303,tensor(1),tensor(1),easy,Misinterpretation of #Question#
+304,tensor(0),tensor(0),,
+305,tensor(1),tensor(1),hard,Misinterpretation of #Question#
+306,tensor(0),tensor(1),,
+307,tensor(1),tensor(1),medium,Incomplete Information
+308,tensor(0),tensor(1),,
+309,tensor(1),tensor(1),hard,Misinterpretation of #Question#
+310,tensor(0),tensor(0),,
+311,tensor(1),tensor(1),hard,Misinterpretation of #Question#
+312,tensor(0),tensor(0),,
+313,tensor(1),tensor(0),medium,Misinterpretation of #Question#
+314,tensor(0),tensor(1),,
+315,tensor(1),tensor(0),hard,Misinterpretation of #Question#
+316,tensor(0),tensor(0),,
+317,tensor(1),tensor(0),hard,Incomplete Information
+318,tensor(1),tensor(0),medium,Incomplete Information
+319,tensor(1),tensor(1),medium,Misinterpretation of #Question#
+320,tensor(0),tensor(0),,
+321,tensor(0),tensor(0),,
+322,tensor(1),tensor(1),hard,Mechanism and Pathway Misattribution
+323,tensor(0),tensor(0),,
+324,tensor(1),tensor(0),hard,Incomplete Information
+325,tensor(0),tensor(0),,
+326,tensor(1),tensor(1),hard,Incomplete Information
+327,tensor(0),tensor(0),,
+328,tensor(1),tensor(0),easy,Misinterpretation of #Question#
+329,tensor(0),tensor(0),,
+330,tensor(1),tensor(1),hard,Incomplete Information
+331,tensor(0),tensor(0),,
+332,tensor(1),tensor(1),hard,Misinterpretation of #Question#
+333,tensor(0),tensor(0),,
+334,tensor(1),tensor(0),medium,Misinterpretation of #Question#
+335,tensor(0),tensor(1),,
+336,tensor(0),tensor(0),,
+337,tensor(0),tensor(0),,
+338,tensor(1),tensor(1),hard,Misinterpretation of #Question#
+339,tensor(0),tensor(1),,
+340,tensor(1),tensor(0),hard,Incomplete Information
+341,tensor(0),tensor(0),,
+342,tensor(1),tensor(0),medium,Incomplete Information
+343,tensor(0),tensor(0),,
+344,tensor(1),tensor(1),medium,Misinterpretation of #Question#
+345,tensor(0),tensor(1),,
+346,tensor(1),tensor(1),medium,Misinterpretation of #Question#
+347,tensor(0),tensor(1),,
+348,tensor(1),tensor(1),easy,Misinterpretation of #Question#
+349,tensor(1),tensor(1),hard,Misinterpretation of #Question#
+350,tensor(0),tensor(0),,
+351,tensor(1),tensor(1),medium,Misinterpretation of #Question#
+352,tensor(0),tensor(0),,
+353,tensor(1),tensor(1),medium,Misinterpretation of #Question#
+354,tensor(0),tensor(0),,
+355,tensor(1),tensor(1),medium,Misinterpretation of #Question#
+356,tensor(0),tensor(0),,
+357,tensor(1),tensor(0),medium,Misinterpretation of #Question#
+358,tensor(0),tensor(0),,
+359,tensor(1),tensor(0),medium,Misinterpretation of #Question#
+360,tensor(0),tensor(0),,
+361,tensor(1),tensor(1),hard,Misinterpretation of #Question#
+362,tensor(0),tensor(1),,
+363,tensor(1),tensor(1),hard,Misinterpretation of #Question#
+364,tensor(0),tensor(1),,
+365,tensor(0),tensor(0),,
+366,tensor(1),tensor(0),hard,Incomplete Information
+367,tensor(1),tensor(1),hard,Misinterpretation of #Question#
+368,tensor(0),tensor(0),,
+369,tensor(0),tensor(1),,
+370,tensor(1),tensor(1),easy,Misinterpretation of #Question#
+371,tensor(1),tensor(1),hard,Incomplete Information
+372,tensor(0),tensor(1),,
+373,tensor(0),tensor(0),,
+374,tensor(1),tensor(1),medium,Misinterpretation of #Question#
+375,tensor(0),tensor(0),,
+376,tensor(1),tensor(0),medium,Misinterpretation of #Question#
+377,tensor(0),tensor(1),,
+378,tensor(1),tensor(0),hard,Incomplete Information
+379,tensor(0),tensor(1),,
+380,tensor(1),tensor(1),medium,Misinterpretation of #Question#
+381,tensor(1),tensor(0),medium,Incomplete Information
+382,tensor(1),tensor(0),easy,Misinterpretation of #Question#
+383,tensor(0),tensor(0),,
+384,tensor(0),tensor(1),,
+385,tensor(1),tensor(0),medium,Misinterpretation of #Question#
+386,tensor(1),tensor(1),easy,Incomplete Information
+387,tensor(0),tensor(0),,
+388,tensor(1),tensor(1),medium,Misinterpretation of #Question#
+389,tensor(0),tensor(0),,
+390,tensor(1),tensor(0),hard,Misinterpretation of #Question#
+391,tensor(0),tensor(0),,
+392,tensor(1),tensor(0),hard,Misinterpretation of #Question#
+393,tensor(1),tensor(1),hard,Mechanism and Pathway Misattribution
+394,tensor(1),tensor(0),hard,Misinterpretation of #Question#
+395,tensor(0),tensor(0),,
+396,tensor(1),tensor(1),hard,Misinterpretation of #Question#
+397,tensor(0),tensor(0),,
+398,tensor(1),tensor(0),medium,Incomplete Information
+399,tensor(0),tensor(0),,
+400,tensor(1),tensor(1),hard,Incomplete Information
+401,tensor(0),tensor(0),,
+402,tensor(1),tensor(0),hard,Incomplete Information
+403,tensor(0),tensor(0),,
+404,tensor(1),tensor(0),hard,Misinterpretation of #Question#
+405,tensor(0),tensor(0),,
+406,tensor(1),tensor(1),hard,Incomplete Information
+407,tensor(0),tensor(1),,
+408,tensor(1),tensor(1),hard,Misinterpretation of #Question#
+409,tensor(0),tensor(1),,
+410,tensor(0),tensor(0),,
+411,tensor(1),tensor(0),hard,Incomplete Information
+412,tensor(0),tensor(0),,
+413,tensor(1),tensor(1),easy,Misinterpretation of #Question#
+414,tensor(0),tensor(1),,
+415,tensor(0),tensor(1),,
+416,tensor(1),tensor(0),easy,Misinterpretation of #Question#
+417,tensor(0),tensor(1),,
+418,tensor(0),tensor(0),,
+419,tensor(1),tensor(0),medium,Misinterpretation of #Question#
+420,tensor(0),tensor(1),,
+421,tensor(0),tensor(0),,
+422,tensor(0),tensor(0),,
+423,tensor(1),tensor(1),medium,Misinterpretation of #Question#
+424,tensor(0),tensor(0),,
+425,tensor(1),tensor(0),medium,Misinterpretation of #Question#
+426,tensor(0),tensor(0),,
+427,tensor(1),tensor(1),easy,Misinterpretation of #Question#
+428,tensor(1),tensor(1),medium,Misinterpretation of #Question#
+429,tensor(0),tensor(1),,
+430,tensor(1),tensor(1),easy,Misinterpretation of #Question#
+431,tensor(0),tensor(1),,
+432,tensor(1),tensor(1),medium,Misinterpretation of #Question#
+433,tensor(0),tensor(1),,
+434,tensor(0),tensor(0),,
+435,tensor(1),tensor(1),hard,Incomplete Information
+436,tensor(0),tensor(0),,
+437,tensor(1),tensor(0),hard,Incomplete Information
+438,tensor(0),tensor(0),,
+439,tensor(1),tensor(1),easy,Misinterpretation of #Question#
+440,tensor(0),tensor(1),,
+441,tensor(0),tensor(1),,
+442,tensor(1),tensor(1),easy,Misinterpretation of #Question#
+443,tensor(0),tensor(0),,
+444,tensor(1),tensor(1),hard,Incomplete Information
+445,tensor(0),tensor(1),,
+446,tensor(1),tensor(1),hard,Incomplete Information
+447,tensor(1),tensor(1),medium,Misinterpretation of #Question#
+448,tensor(0),tensor(0),,
+449,tensor(1),tensor(0),hard,Misinterpretation of #Question#
+450,tensor(0),tensor(0),,
+451,tensor(0),tensor(1),,
+452,tensor(1),tensor(0),easy,Incomplete Information
+453,tensor(0),tensor(0),,
+454,tensor(1),tensor(0),easy,Misinterpretation of #Question#
+455,tensor(0),tensor(0),,
+456,tensor(0),tensor(1),,
+457,tensor(1),tensor(0),medium,Misinterpretation of #Question#
+458,tensor(0),tensor(1),,
+459,tensor(0),tensor(0),,
+460,tensor(1),tensor(1),medium,Misinterpretation of #Question#
+461,tensor(0),tensor(0),,
+462,tensor(1),tensor(0),medium,Incomplete Information
+463,tensor(0),tensor(0),,
+464,tensor(0),tensor(1),,
+465,tensor(1),tensor(0),hard,Misinterpretation of #Question#
+466,tensor(0),tensor(1),,
+467,tensor(1),tensor(1),easy,Misinterpretation of #Question#
+468,tensor(1),tensor(1),hard,Misinterpretation of #Question#
+469,tensor(0),tensor(1),,
+470,tensor(1),tensor(1),easy,Misinterpretation of #Question#
+471,tensor(0),tensor(1),,
+472,tensor(1),tensor(1),hard,Incomplete Information
+473,tensor(0),tensor(0),,
+474,tensor(1),tensor(0),hard,Misinterpretation of #Question#
+475,tensor(0),tensor(0),,
+476,tensor(1),tensor(1),hard,Misinterpretation of #Question#
+477,tensor(0),tensor(1),,
+478,tensor(0),tensor(0),,
+479,tensor(0),tensor(0),,
+480,tensor(1),tensor(1),medium,Misinterpretation of #Question#
+481,tensor(0),tensor(1),,
+482,tensor(1),tensor(1),easy,Misinterpretation of #Question#
+483,tensor(0),tensor(0),,
+484,tensor(0),tensor(1),,
+485,tensor(1),tensor(0),medium,Misinterpretation of #Question#
+486,tensor(0),tensor(0),,
+487,tensor(1),tensor(0),hard,Incomplete Information
+488,tensor(1),tensor(1),easy,Misinterpretation of #Question#
+489,tensor(0),tensor(1),,
+490,tensor(1),tensor(1),hard,Misinterpretation of #Question#
+491,tensor(0),tensor(1),,
+492,tensor(1),tensor(1),easy,Incomplete Information
+493,tensor(0),tensor(1),,
+494,tensor(0),tensor(0),,
+495,tensor(1),tensor(0),medium,Misinterpretation of #Question#
+496,tensor(0),tensor(1),,
+497,tensor(0),tensor(0),,
+498,tensor(1),tensor(1),medium,Misinterpretation of #Question#
+499,tensor(0),tensor(0),,
+500,tensor(1),tensor(1),easy,Misinterpretation of #Question#
+501,tensor(1),tensor(1),hard,Incomplete Information
+502,tensor(0),tensor(1),,
+503,tensor(1),tensor(1),medium,Misinterpretation of #Question#
+504,tensor(1),tensor(1),easy,Misinterpretation of #Question#
+505,tensor(0),tensor(1),,
+506,tensor(0),tensor(1),,
+507,tensor(0),tensor(0),,
+508,tensor(1),tensor(0),hard,Incomplete Information
+509,tensor(0),tensor(1),,
+510,tensor(1),tensor(0),easy,Misinterpretation of #Question#
+511,tensor(0),tensor(0),,
+512,tensor(0),tensor(0),,
+513,tensor(1),tensor(1),medium,Incomplete Information
+514,tensor(1),tensor(0),hard,Incomplete Information
+515,tensor(0),tensor(0),,
+516,tensor(0),tensor(0),,
+517,tensor(1),tensor(1),hard,Misinterpretation of #Question#
+518,tensor(0),tensor(0),,
+519,tensor(0),tensor(1),,
+520,tensor(1),tensor(0),medium,Misinterpretation of #Question#
+521,tensor(0),tensor(0),,
+522,tensor(1),tensor(1),medium,Incomplete Information
+523,tensor(0),tensor(0),,
+524,tensor(1),tensor(0),hard,Misinterpretation of #Question#
+525,tensor(1),tensor(0),hard,Misinterpretation of #Question#
+526,tensor(0),tensor(1),,
+527,tensor(1),tensor(0),easy,Misinterpretation of #Question#
+528,tensor(0),tensor(0),,
+529,tensor(1),tensor(0),hard,Misinterpretation of #Question#
+530,tensor(1),tensor(0),hard,Misinterpretation of #Question#
+531,tensor(0),tensor(1),,
+532,tensor(1),tensor(0),hard,Misinterpretation of #Question#
+533,tensor(0),tensor(0),,
+534,tensor(1),tensor(1),hard,Misinterpretation of #Question#
+535,tensor(0),tensor(0),,
+536,tensor(1),tensor(0),medium,Misinterpretation of #Question#
+537,tensor(0),tensor(0),,
+538,tensor(1),tensor(1),easy,Misinterpretation of #Question#
+539,tensor(1),tensor(1),medium,Misinterpretation of #Question#
+540,tensor(0),tensor(1),,
+541,tensor(1),tensor(0),easy,Incomplete Information
+542,tensor(0),tensor(0),,
+543,tensor(1),tensor(0),medium,Incomplete Information
+544,tensor(0),tensor(1),,
+545,tensor(1),tensor(0),medium,Misinterpretation of #Question#
+546,tensor(1),tensor(1),hard,Misinterpretation of #Question#
+547,tensor(0),tensor(1),,
+548,tensor(0),tensor(0),,
+549,tensor(0),tensor(1),,
+550,tensor(1),tensor(0),easy,Misinterpretation of #Question#
+551,tensor(0),tensor(1),,
+552,tensor(0),tensor(0),,
+553,tensor(1),tensor(0),hard,Misinterpretation of #Question#
+554,tensor(0),tensor(0),,
+555,tensor(0),tensor(0),,
+556,tensor(1),tensor(0),medium,Misinterpretation of #Question#
+557,tensor(0),tensor(0),,
+558,tensor(1),tensor(0),hard,Incomplete Information
+559,tensor(0),tensor(1),,
+560,tensor(1),tensor(1),medium,Incomplete Information
+561,tensor(0),tensor(0),,
+562,tensor(1),tensor(0),medium,Incomplete Information
+563,tensor(1),tensor(1),easy,Misinterpretation of #Question#
+564,tensor(1),tensor(0),easy,Misinterpretation of #Question#
+565,tensor(0),tensor(1),,
+566,tensor(0),tensor(0),,
+567,tensor(1),tensor(0),easy,Misinterpretation of #Question#
+568,tensor(0),tensor(0),,
+569,tensor(1),tensor(1),hard,Misinterpretation of #Question#
+570,tensor(0),tensor(1),,
+571,tensor(0),tensor(1),,
+572,tensor(1),tensor(0),hard,Misinterpretation of #Question#
+573,tensor(0),tensor(0),,
+574,tensor(1),tensor(0),medium,Misinterpretation of #Question#
+575,tensor(0),tensor(0),,
+576,tensor(1),tensor(0),hard,Misinterpretation of #Question#
+577,tensor(0),tensor(1),,
+578,tensor(0),tensor(0),,
+579,tensor(1),tensor(0),medium,Misinterpretation of #Question#
+580,tensor(1),tensor(1),easy,Misinterpretation of #Question#
+581,tensor(1),tensor(0),hard,Misinterpretation of #Question#
+582,tensor(1),tensor(0),hard,Incomplete Information
+583,tensor(0),tensor(1),,
+584,tensor(1),tensor(0),hard,Misinterpretation of #Question#
+585,tensor(1),tensor(0),easy,Misinterpretation of #Question#
+586,tensor(0),tensor(0),,
+587,tensor(1),tensor(0),medium,Misinterpretation of #Question#
+588,tensor(0),tensor(1),,
+589,tensor(0),tensor(0),,
+590,tensor(1),tensor(0),hard,Incomplete Information
+591,tensor(1),tensor(1),hard,Misinterpretation of #Question#
+592,tensor(1),tensor(1),medium,Misinterpretation of #Question#
+593,tensor(1),tensor(0),hard,Misinterpretation of #Question#
+594,tensor(1),tensor(0),hard,Incomplete Information
+595,tensor(1),tensor(0),hard,Misinterpretation of #Question#
+596,tensor(0),tensor(0),,
+597,tensor(0),tensor(0),,
+598,tensor(0),tensor(1),,
+599,tensor(0),tensor(0),,
+600,tensor(1),tensor(1),hard,Incomplete Information
+601,tensor(0),tensor(1),,
+602,tensor(1),tensor(1),hard,Misinterpretation of #Question#
+603,tensor(0),tensor(1),,
+604,tensor(1),tensor(0),hard,Misinterpretation of #Question#
+605,tensor(0),tensor(1),,
+606,tensor(1),tensor(1),medium,Misinterpretation of #Question#
+607,tensor(1),tensor(1),hard,Misinterpretation of #Question#
+608,tensor(0),tensor(0),,
+609,tensor(1),tensor(0),easy,Misinterpretation of #Question#
+610,tensor(0),tensor(0),,
+611,tensor(1),tensor(1),medium,Incomplete Information
+612,tensor(1),tensor(0),easy,Misinterpretation of #Question#
+613,tensor(1),tensor(0),medium,Misinterpretation of #Question#
+614,tensor(1),tensor(1),hard,Misinterpretation of #Question#
+615,tensor(0),tensor(0),,
+616,tensor(1),tensor(1),hard,Incomplete Information
+617,tensor(0),tensor(0),,
+618,tensor(1),tensor(1),easy,Incomplete Information
+619,tensor(0),tensor(1),,
+620,tensor(1),tensor(0),hard,Misinterpretation of #Question#
+621,tensor(0),tensor(0),,
+622,tensor(0),tensor(0),,
+623,tensor(1),tensor(1),hard,Misinterpretation of #Question#
+624,tensor(0),tensor(0),,
+625,tensor(1),tensor(0),hard,Misinterpretation of #Question#
+626,tensor(0),tensor(1),,
+627,tensor(1),tensor(1),medium,Misinterpretation of #Question#
+628,tensor(0),tensor(1),,
+629,tensor(1),tensor(0),medium,Misinterpretation of #Question#
+630,tensor(0),tensor(0),,
+631,tensor(1),tensor(1),easy,Misinterpretation of #Question#
+632,tensor(0),tensor(0),,
+633,tensor(1),tensor(1),hard,Misinterpretation of #Question#
+634,tensor(0),tensor(0),,
+635,tensor(0),tensor(1),,
+636,tensor(1),tensor(0),easy,Misinterpretation of #Question#
+637,tensor(0),tensor(1),,
+638,tensor(1),tensor(1),easy,Misinterpretation of #Question#
+639,tensor(0),tensor(0),,
+640,tensor(0),tensor(0),,
+641,tensor(1),tensor(1),easy,Misinterpretation of #Question#
+642,tensor(0),tensor(0),,
+643,tensor(1),tensor(1),medium,Misinterpretation of #Question#
+644,tensor(0),tensor(0),,
+645,tensor(1),tensor(0),easy,Mechanism and Pathway Misattribution
+646,tensor(0),tensor(1),,
+647,tensor(1),tensor(0),hard,Misinterpretation of #Question#
+648,tensor(1),tensor(0),hard,Incomplete Information
+649,tensor(0),tensor(0),,
+650,tensor(1),tensor(1),hard,Misinterpretation of #Question#
+651,tensor(0),tensor(1),,
+652,tensor(1),tensor(1),easy,Misinterpretation of #Question#
+653,tensor(1),tensor(1),hard,Misinterpretation of #Question#
+654,tensor(0),tensor(1),,
+655,tensor(1),tensor(1),hard,Mechanism and Pathway Misattribution
+656,tensor(1),tensor(0),hard,Misinterpretation of #Question#
+657,tensor(0),tensor(0),,
+658,tensor(0),tensor(0),,
+659,tensor(1),tensor(0),medium,Misinterpretation of #Question#
+660,tensor(0),tensor(0),,
+661,tensor(0),tensor(0),,
+662,tensor(1),tensor(1),easy,Misinterpretation of #Question#
+663,tensor(1),tensor(1),easy,Misinterpretation of #Question#
+664,tensor(0),tensor(1),,
+665,tensor(0),tensor(1),,
+666,tensor(1),tensor(1),easy,Misinterpretation of #Question#
+667,tensor(0),tensor(1),,
+668,tensor(1),tensor(1),medium,Misinterpretation of #Question#
+669,tensor(0),tensor(1),,
+670,tensor(1),tensor(0),easy,Misinterpretation of #Question#
+671,tensor(0),tensor(1),,
+672,tensor(1),tensor(0),easy,Incomplete Information
+673,tensor(0),tensor(1),,
+674,tensor(1),tensor(1),medium,Misinterpretation of #Question#
+675,tensor(0),tensor(0),,
+676,tensor(1),tensor(0),easy,Misinterpretation of #Question#
+677,tensor(0),tensor(0),,
+678,tensor(0),tensor(1),,
+679,tensor(1),tensor(0),hard,Incomplete Information
+680,tensor(0),tensor(0),,
+681,tensor(1),tensor(1),medium,Misinterpretation of #Question#
+682,tensor(0),tensor(0),,
+683,tensor(1),tensor(0),easy,Misinterpretation of #Question#
+684,tensor(0),tensor(1),,
+685,tensor(0),tensor(0),,
+686,tensor(1),tensor(1),hard,Misinterpretation of #Question#
+687,tensor(0),tensor(1),,
+688,tensor(0),tensor(0),,
+689,tensor(1),tensor(0),hard,Incomplete Information
+690,tensor(0),tensor(1),,
+691,tensor(1),tensor(0),easy,Incomplete Information
+692,tensor(0),tensor(0),,
+693,tensor(0),tensor(0),,
+694,tensor(1),tensor(0),hard,Misinterpretation of #Question#
+695,tensor(0),tensor(0),,
+696,tensor(1),tensor(0),easy,Misinterpretation of #Question#
+697,tensor(0),tensor(1),,
+698,tensor(1),tensor(0),hard,Misinterpretation of #Question#
+699,tensor(1),tensor(1),easy,Misinterpretation of #Question#
+700,tensor(0),tensor(0),,
+701,tensor(1),tensor(1),medium,Incomplete Information
+702,tensor(0),tensor(0),,
+703,tensor(0),tensor(0),,
+704,tensor(1),tensor(1),easy,Misinterpretation of #Question#
+705,tensor(0),tensor(1),,
+706,tensor(1),tensor(0),hard,Misinterpretation of #Question#
+707,tensor(0),tensor(1),,
+708,tensor(1),tensor(0),medium,Misinterpretation of #Question#
+709,tensor(0),tensor(0),,
+710,tensor(1),tensor(1),medium,Misinterpretation of #Question#
+711,tensor(0),tensor(0),,
+712,tensor(1),tensor(1),easy,Misinterpretation of #Question#
+713,tensor(1),tensor(0),hard,Misinterpretation of #Question#
+714,tensor(0),tensor(0),,
+715,tensor(1),tensor(1),medium,Misinterpretation of #Question#
+716,tensor(0),tensor(0),,
+717,tensor(1),tensor(1),hard,Misinterpretation of #Question#
+718,tensor(0),tensor(0),,
+719,tensor(1),tensor(1),hard,Misinterpretation of #Question#
+720,tensor(0),tensor(1),,
+721,tensor(1),tensor(0),easy,Misinterpretation of #Question#
+722,tensor(1),tensor(1),hard,Misinterpretation of #Question#
+723,tensor(0),tensor(0),,
+724,tensor(0),tensor(0),,
+725,tensor(0),tensor(1),,
+726,tensor(0),tensor(0),,
+727,tensor(0),tensor(1),,
+728,tensor(1),tensor(0),hard,Misinterpretation of #Question#
+729,tensor(0),tensor(0),,
+730,tensor(1),tensor(1),medium,Incomplete Information
+731,tensor(0),tensor(0),,
+732,tensor(0),tensor(1),,
+733,tensor(1),tensor(1),hard,Misinterpretation of #Question#
+734,tensor(0),tensor(0),,
+735,tensor(1),tensor(0),hard,Misinterpretation of #Question#
+736,tensor(1),tensor(1),easy,Misinterpretation of #Question#
+737,tensor(1),tensor(0),easy,Incomplete Information
+738,tensor(0),tensor(0),,
+739,tensor(1),tensor(1),medium,Misinterpretation of #Question#
+740,tensor(0),tensor(0),,
+741,tensor(1),tensor(1),easy,Misinterpretation of #Question#
+742,tensor(0),tensor(0),,
+743,tensor(1),tensor(0),medium,Incomplete Information
+744,tensor(0),tensor(0),,
+745,tensor(1),tensor(0),hard,Incomplete Information
+746,tensor(0),tensor(0),,
+747,tensor(0),tensor(0),,
+748,tensor(1),tensor(1),medium,Misinterpretation of #Question#
+749,tensor(0),tensor(1),,
+750,tensor(1),tensor(1),hard,Incomplete Information
+751,tensor(0),tensor(0),,
+752,tensor(1),tensor(1),medium,Misinterpretation of #Question#
+753,tensor(0),tensor(1),,
+754,tensor(1),tensor(1),hard,Misinterpretation of #Question#
+755,tensor(0),tensor(1),,
+756,tensor(1),tensor(1),easy,Misinterpretation of #Question#
+757,tensor(0),tensor(0),,
+758,tensor(1),tensor(1),hard,Misinterpretation of #Question#
+759,tensor(0),tensor(1),,
+760,tensor(1),tensor(0),medium,Misinterpretation of #Question#
+761,tensor(0),tensor(1),,
+762,tensor(1),tensor(0),easy,Misinterpretation of #Question#
+763,tensor(0),tensor(0),,
+764,tensor(1),tensor(1),easy,Misinterpretation of #Question#
+765,tensor(0),tensor(1),,
+766,tensor(1),tensor(0),hard,Misinterpretation of #Question#
+767,tensor(1),tensor(0),medium,Incomplete Information
+768,tensor(0),tensor(1),,
+769,tensor(1),tensor(0),easy,Misinterpretation of #Question#
+770,tensor(1),tensor(1),hard,Misinterpretation of #Question#
+771,tensor(0),tensor(0),,
+772,tensor(1),tensor(1),easy,Misinterpretation of #Question#
+773,tensor(0),tensor(0),,
+774,tensor(1),tensor(1),easy,Misinterpretation of #Question#
+775,tensor(0),tensor(1),,
+776,tensor(0),tensor(1),,
+777,tensor(0),tensor(0),,
+778,tensor(1),tensor(1),medium,Misinterpretation of #Question#
+779,tensor(0),tensor(1),,
+780,tensor(1),tensor(0),hard,Incomplete Information
+781,tensor(0),tensor(1),,
+782,tensor(0),tensor(0),,
+783,tensor(1),tensor(0),hard,Misinterpretation of #Question#
+784,tensor(1),tensor(0),medium,Misinterpretation of #Question#
+785,tensor(0),tensor(1),,
+786,tensor(1),tensor(1),hard,Misinterpretation of #Question#
+787,tensor(0),tensor(0),,
+788,tensor(1),tensor(1),hard,Misinterpretation of #Question#
+789,tensor(0),tensor(1),,
+790,tensor(1),tensor(0),easy,Misinterpretation of #Question#
+791,tensor(0),tensor(0),,
+792,tensor(1),tensor(1),easy,Misinterpretation of #Question#
+793,tensor(0),tensor(0),,
+794,tensor(1),tensor(1),medium,Misinterpretation of #Question#
+795,tensor(0),tensor(0),,
+796,tensor(1),tensor(1),hard,Misinterpretation of #Question#
+797,tensor(0),tensor(1),,
+798,tensor(1),tensor(0),easy,Misinterpretation of #Question#
+799,tensor(0),tensor(0),,
+800,tensor(1),tensor(1),hard,Incomplete Information
+801,tensor(0),tensor(0),,
+802,tensor(1),tensor(1),medium,Misinterpretation of #Question#
+803,tensor(0),tensor(0),,
+804,tensor(0),tensor(0),,
+805,tensor(0),tensor(0),,
+806,tensor(0),tensor(0),,
+807,tensor(0),tensor(1),,
+808,tensor(1),tensor(1),easy,Misinterpretation of #Question#
+809,tensor(1),tensor(0),easy,Incomplete Information
+810,tensor(0),tensor(1),,
+811,tensor(0),tensor(0),,
+812,tensor(0),tensor(1),,
+813,tensor(1),tensor(0),medium,Misinterpretation of #Question#
+814,tensor(0),tensor(0),,
+815,tensor(0),tensor(0),,
+816,tensor(1),tensor(0),medium,Incomplete Information
+817,tensor(1),tensor(1),easy,Misinterpretation of #Question#
+818,tensor(0),tensor(0),,
+819,tensor(1),tensor(0),easy,Misinterpretation of #Question#
+820,tensor(0),tensor(0),,
+821,tensor(1),tensor(1),easy,Misinterpretation of #Question#
+822,tensor(0),tensor(0),,
+823,tensor(1),tensor(1),hard,Incomplete Information
+824,tensor(0),tensor(0),,
+825,tensor(1),tensor(1),easy,Misinterpretation of #Question#
+826,tensor(0),tensor(1),,
+827,tensor(0),tensor(1),,
+828,tensor(1),tensor(1),hard,Misinterpretation of #Question#
+829,tensor(1),tensor(1),medium,Misinterpretation of #Question#
+830,tensor(1),tensor(1),easy,Misinterpretation of #Question#
+831,tensor(0),tensor(0),,
+832,tensor(1),tensor(1),easy,Misinterpretation of #Question#
+833,tensor(0),tensor(0),,
+834,tensor(1),tensor(1),hard,Incomplete Information
+835,tensor(0),tensor(1),,
+836,tensor(1),tensor(0),easy,Misinterpretation of #Question#
+837,tensor(0),tensor(0),,
+838,tensor(1),tensor(1),hard,Misinterpretation of #Question#
+839,tensor(0),tensor(1),,
+840,tensor(1),tensor(1),medium,Incomplete Information
+841,tensor(0),tensor(0),,
+842,tensor(1),tensor(1),medium,Misinterpretation of #Question#
+843,tensor(0),tensor(1),,
+844,tensor(0),tensor(1),,
+845,tensor(0),tensor(1),,
+846,tensor(1),tensor(0),medium,Mechanism and Pathway Misattribution
+847,tensor(0),tensor(0),,
+848,tensor(1),tensor(1),hard,Mechanism and Pathway Misattribution
+849,tensor(0),tensor(0),,
+850,tensor(1),tensor(1),hard,Misinterpretation of #Question#
+851,tensor(0),tensor(1),,
+852,tensor(1),tensor(1),medium,Misinterpretation of #Question#
+853,tensor(1),tensor(1),hard,Incomplete Information
+854,tensor(0),tensor(1),,
+855,tensor(1),tensor(1),easy,Misinterpretation of #Question#
+856,tensor(0),tensor(1),,
+857,tensor(1),tensor(1),easy,Mechanism and Pathway Misattribution
+858,tensor(0),tensor(0),,
+859,tensor(1),tensor(0),hard,Misinterpretation of #Question#
+860,tensor(1),tensor(1),medium,Misinterpretation of #Question#
+861,tensor(0),tensor(0),,
+862,tensor(1),tensor(1),hard,Misinterpretation of #Question#
+863,tensor(0),tensor(0),,
+864,tensor(0),tensor(1),,
+865,tensor(1),tensor(1),easy,Misinterpretation of #Question#
+866,tensor(0),tensor(0),,
+867,tensor(1),tensor(1),easy,Misinterpretation of #Question#
+868,tensor(0),tensor(0),,
+869,tensor(1),tensor(1),easy,Misinterpretation of #Question#
+870,tensor(0),tensor(1),,
+871,tensor(1),tensor(1),hard,Misinterpretation of #Question#
+872,tensor(0),tensor(0),,
+873,tensor(0),tensor(1),,
+874,tensor(0),tensor(0),,
+875,tensor(1),tensor(0),hard,Misinterpretation of #Question#
+876,tensor(0),tensor(0),,
+877,tensor(0),tensor(0),,
+878,tensor(1),tensor(0),medium,Misinterpretation of #Question#
+879,tensor(0),tensor(0),,
+880,tensor(1),tensor(1),hard,Incomplete Information
+881,tensor(0),tensor(0),,
+882,tensor(1),tensor(1),hard,Misinterpretation of #Question#
+883,tensor(1),tensor(1),medium,Misinterpretation of #Question#
+884,tensor(0),tensor(0),,
+885,tensor(1),tensor(1),hard,Misinterpretation of #Question#
+886,tensor(0),tensor(0),,
+887,tensor(1),tensor(0),hard,Incomplete Information
+888,tensor(0),tensor(0),,
+889,tensor(0),tensor(0),,
+890,tensor(1),tensor(1),easy,Misinterpretation of #Question#
+891,tensor(0),tensor(1),,
+892,tensor(1),tensor(1),hard,Misinterpretation of #Question#
+893,tensor(0),tensor(0),,
+894,tensor(1),tensor(0),medium,Misinterpretation of #Question#
+895,tensor(1),tensor(1),medium,Misinterpretation of #Question#
+896,tensor(0),tensor(0),,
+897,tensor(1),tensor(0),medium,Misinterpretation of #Question#
+898,tensor(1),tensor(0),easy,Incomplete Information
+899,tensor(0),tensor(1),,
+900,tensor(1),tensor(1),hard,Misinterpretation of #Question#
+901,tensor(0),tensor(0),,
+902,tensor(1),tensor(1),easy,Incomplete Information
+903,tensor(0),tensor(0),,
+904,tensor(0),tensor(1),,
+905,tensor(0),tensor(1),,
+906,tensor(0),tensor(0),,
+907,tensor(1),tensor(1),hard,Misinterpretation of #Question#
+908,tensor(0),tensor(0),,
+909,tensor(1),tensor(1),hard,Misinterpretation of #Question#
+910,tensor(1),tensor(1),hard,Misinterpretation of #Question#
+911,tensor(0),tensor(1),,
+912,tensor(1),tensor(1),hard,Misinterpretation of #Question#
+913,tensor(1),tensor(0),hard,Misinterpretation of #Question#
+914,tensor(0),tensor(0),,
+915,tensor(1),tensor(1),easy,Incomplete Information
+916,tensor(0),tensor(0),,
+917,tensor(1),tensor(1),easy,Misinterpretation of #Question#
+918,tensor(0),tensor(1),,
+919,tensor(1),tensor(1),medium,Misinterpretation of #Question#
+920,tensor(1),tensor(0),medium,Incomplete Information
+921,tensor(0),tensor(1),,
+922,tensor(1),tensor(1),easy,Misinterpretation of #Question#
+923,tensor(0),tensor(0),,
+924,tensor(1),tensor(0),medium,Misinterpretation of #Question#
+925,tensor(0),tensor(1),,
+926,tensor(1),tensor(0),easy,Misinterpretation of #Question#
+927,tensor(1),tensor(1),hard,Misinterpretation of #Question#
+928,tensor(0),tensor(1),,
+929,tensor(1),tensor(0),medium,Misinterpretation of #Question#
+930,tensor(0),tensor(0),,
+931,tensor(1),tensor(0),hard,Misinterpretation of #Question#
+932,tensor(0),tensor(0),,
+933,tensor(0),tensor(1),,
+934,tensor(0),tensor(1),,
+935,tensor(1),tensor(1),medium,Misinterpretation of #Question#
+936,tensor(1),tensor(0),hard,Misinterpretation of #Question#
+937,tensor(1),tensor(0),medium,Misinterpretation of #Question#
+938,tensor(0),tensor(0),,
+939,tensor(1),tensor(0),hard,Misinterpretation of #Question#
+940,tensor(0),tensor(0),,
+941,tensor(0),tensor(1),,
+942,tensor(1),tensor(1),medium,Misinterpretation of #Question#
+943,tensor(0),tensor(0),,
+944,tensor(0),tensor(1),,
+945,tensor(1),tensor(0),easy,Misinterpretation of #Question#
+946,tensor(0),tensor(1),,
+947,tensor(0),tensor(0),,
+948,tensor(1),tensor(0),easy,Misinterpretation of #Question#
+949,tensor(1),tensor(0),hard,Incomplete Information
+950,tensor(0),tensor(0),,
+951,tensor(1),tensor(1),medium,Misinterpretation of #Question#
+952,tensor(0),tensor(0),,
+953,tensor(1),tensor(1),medium,Misinterpretation of #Question#
+954,tensor(0),tensor(1),,
+955,tensor(1),tensor(1),hard,Incomplete Information
+956,tensor(0),tensor(1),,
+957,tensor(1),tensor(1),easy,Misinterpretation of #Question#
+958,tensor(1),tensor(1),hard,Incomplete Information
+959,tensor(0),tensor(0),,
+960,tensor(1),tensor(1),medium,Misinterpretation of #Question#
+961,tensor(0),tensor(1),,
+962,tensor(1),tensor(1),easy,Misinterpretation of #Question#
+963,tensor(0),tensor(0),,
+964,tensor(0),tensor(0),,
+965,tensor(1),tensor(0),easy,Misinterpretation of #Question#
+966,tensor(0),tensor(0),,
+967,tensor(0),tensor(1),,
+968,tensor(1),tensor(1),hard,Misinterpretation of #Question#
+969,tensor(0),tensor(1),,
+970,tensor(1),tensor(1),medium,Misinterpretation of #Question#
+971,tensor(0),tensor(0),,
+972,tensor(1),tensor(1),easy,Misinterpretation of #Question#
+973,tensor(0),tensor(1),,
+974,tensor(1),tensor(1),hard,Incomplete Information
+975,tensor(0),tensor(1),,
+976,tensor(1),tensor(1),hard,Incomplete Information
+977,tensor(0),tensor(1),,
+978,tensor(0),tensor(0),,
+979,tensor(1),tensor(1),medium,Misinterpretation of #Question#
+980,tensor(1),tensor(0),medium,Misinterpretation of #Question#
+981,tensor(0),tensor(0),,
+982,tensor(1),tensor(0),medium,Misinterpretation of #Question#
+983,tensor(0),tensor(0),,
+984,tensor(1),tensor(1),easy,Incomplete Information
+985,tensor(0),tensor(1),,
+986,tensor(0),tensor(0),,
+987,tensor(1),tensor(1),easy,Misinterpretation of #Question#
+988,tensor(1),tensor(1),easy,Misinterpretation of #Question#
+989,tensor(0),tensor(0),,
+990,tensor(1),tensor(1),hard,Incomplete Information
+991,tensor(1),tensor(0),medium,Incomplete Information
+992,tensor(0),tensor(0),,
+993,tensor(1),tensor(1),medium,Misinterpretation of #Question#
+994,tensor(1),tensor(0),medium,Incomplete Information
+995,tensor(1),tensor(1),medium,Misinterpretation of #Question#
+996,tensor(0),tensor(1),,
+997,tensor(1),tensor(0),medium,Incomplete Information
+998,tensor(0),tensor(0),,
+999,tensor(1),tensor(0),medium,Misinterpretation of #Question#
+1000,tensor(0),tensor(1),,
+1001,tensor(1),tensor(1),hard,Incomplete Information
+1002,tensor(0),tensor(1),,
+1003,tensor(1),tensor(1),hard,Incomplete Information
+1004,tensor(0),tensor(0),,
+1005,tensor(1),tensor(1),easy,Misinterpretation of #Question#
+1006,tensor(0),tensor(0),,
+1007,tensor(1),tensor(1),medium,Misinterpretation of #Question#
+1008,tensor(0),tensor(1),,
+1009,tensor(1),tensor(1),medium,Misinterpretation of #Question#
+1010,tensor(0),tensor(1),,
+1011,tensor(1),tensor(1),hard,Misinterpretation of #Question#
+1012,tensor(0),tensor(0),,
+1013,tensor(0),tensor(1),,
+1014,tensor(0),tensor(0),,
+1015,tensor(1),tensor(1),hard,Misinterpretation of #Question#
+1016,tensor(0),tensor(0),,
+1017,tensor(0),tensor(0),,
+1018,tensor(0),tensor(0),,
+1019,tensor(1),tensor(0),hard,Misinterpretation of #Question#
+1020,tensor(0),tensor(0),,
+1021,tensor(0),tensor(0),,
+1022,tensor(0),tensor(1),,
+1023,tensor(1),tensor(0),easy,Incomplete Information
+1024,tensor(0),tensor(1),,
+1025,tensor(0),tensor(0),,
+1026,tensor(0),tensor(0),,
+1027,tensor(0),tensor(1),,
+1028,tensor(1),tensor(0),hard,Incomplete Information
+1029,tensor(0),tensor(1),,
+1030,tensor(1),tensor(1),hard,Misinterpretation of #Question#
+1031,tensor(0),tensor(1),,
+1032,tensor(1),tensor(0),hard,Misinterpretation of #Question#
+1033,tensor(1),tensor(0),hard,Misinterpretation of #Question#
+1034,tensor(0),tensor(1),,
+1035,tensor(1),tensor(0),easy,Incomplete Information
+1036,tensor(1),tensor(0),medium,Misinterpretation of #Question#
+1037,tensor(0),tensor(1),,
+1038,tensor(1),tensor(0),medium,Misinterpretation of #Question#
+1039,tensor(0),tensor(1),,
+1040,tensor(1),tensor(1),medium,Incomplete Information
+1041,tensor(0),tensor(0),,
+1042,tensor(1),tensor(0),hard,Misinterpretation of #Question#
+1043,tensor(0),tensor(0),,
+1044,tensor(0),tensor(1),,
+1045,tensor(1),tensor(1),medium,Misinterpretation of #Question#
+1046,tensor(1),tensor(1),hard,Misinterpretation of #Question#
+1047,tensor(0),tensor(1),,
+1048,tensor(1),tensor(0),hard,Misinterpretation of #Question#
+1049,tensor(0),tensor(0),,
+1050,tensor(1),tensor(1),medium,Incomplete Information
+1051,tensor(0),tensor(1),,
+1052,tensor(1),tensor(1),easy,Misinterpretation of #Question#
+1053,tensor(0),tensor(1),,
+1054,tensor(1),tensor(1),hard,Incomplete Information
+1055,tensor(0),tensor(0),,
+1056,tensor(1),tensor(1),medium,Misinterpretation of #Question#
+1057,tensor(0),tensor(1),,
+1058,tensor(1),tensor(1),hard,Misinterpretation of #Question#
+1059,tensor(0),tensor(0),,
+1060,tensor(1),tensor(1),hard,Incomplete Information
+1061,tensor(0),tensor(0),,
+1062,tensor(1),tensor(1),hard,Incomplete Information
+1063,tensor(1),tensor(0),medium,Mechanism and Pathway Misattribution
+1064,tensor(0),tensor(0),,
+1065,tensor(1),tensor(1),hard,Misinterpretation of #Question#
+1066,tensor(0),tensor(0),,
+1067,tensor(1),tensor(1),hard,Misinterpretation of #Question#
+1068,tensor(0),tensor(0),,
+1069,tensor(0),tensor(0),,
+1070,tensor(0),tensor(0),,
+1071,tensor(1),tensor(1),easy,Misinterpretation of #Question#
+1072,tensor(1),tensor(0),medium,Incomplete Information
+1073,tensor(1),tensor(1),medium,Misinterpretation of #Question#
+1074,tensor(1),tensor(1),medium,Misinterpretation of #Question#
+1075,tensor(1),tensor(1),medium,Misinterpretation of #Question#
+1076,tensor(0),tensor(1),,
+1077,tensor(1),tensor(1),hard,Misinterpretation of #Question#
+1078,tensor(0),tensor(0),,
+1079,tensor(1),tensor(0),hard,Misinterpretation of #Question#
+1080,tensor(0),tensor(0),,
+1081,tensor(1),tensor(1),easy,Misinterpretation of #Question#
+1082,tensor(0),tensor(0),,
+1083,tensor(1),tensor(1),medium,Incomplete Information
+1084,tensor(0),tensor(0),,
+1085,tensor(1),tensor(1),medium,Misinterpretation of #Question#
+1086,tensor(1),tensor(1),hard,Misinterpretation of #Question#
+1087,tensor(0),tensor(1),,
+1088,tensor(1),tensor(0),hard,Misinterpretation of #Question#
+1089,tensor(0),tensor(0),,
+1090,tensor(0),tensor(1),,
+1091,tensor(1),tensor(1),medium,Misinterpretation of #Question#
+1092,tensor(0),tensor(0),,
+1093,tensor(1),tensor(1),hard,Misinterpretation of #Question#
+1094,tensor(0),tensor(1),,
+1095,tensor(1),tensor(0),medium,Incomplete Information
+1096,tensor(0),tensor(0),,
+1097,tensor(1),tensor(0),easy,Misinterpretation of #Question#
+1098,tensor(0),tensor(0),,
+1099,tensor(1),tensor(0),medium,Misinterpretation of #Question#
+1100,tensor(0),tensor(0),,
+1101,tensor(1),tensor(0),medium,Misinterpretation of #Question#
+1102,tensor(0),tensor(0),,
+1103,tensor(0),tensor(1),,
+1104,tensor(1),tensor(0),hard,Misinterpretation of #Question#
+1105,tensor(0),tensor(1),,
+1106,tensor(1),tensor(0),hard,Mechanism and Pathway Misattribution
+1107,tensor(0),tensor(0),,
+1108,tensor(0),tensor(1),,
+1109,tensor(1),tensor(1),easy,Misinterpretation of #Question#
+1110,tensor(1),tensor(1),hard,Misinterpretation of #Question#
+1111,tensor(0),tensor(0),,
+1112,tensor(1),tensor(0),hard,Misinterpretation of #Question#
+1113,tensor(1),tensor(1),medium,Misinterpretation of #Question#
+1114,tensor(0),tensor(1),,
+1115,tensor(1),tensor(0),medium,Misinterpretation of #Question#
+1116,tensor(0),tensor(0),,
+1117,tensor(1),tensor(0),hard,Misinterpretation of #Question#
+1118,tensor(0),tensor(1),,
+1119,tensor(0),tensor(1),,
+1120,tensor(1),tensor(1),hard,Misinterpretation of #Question#
+1121,tensor(0),tensor(1),,
+1122,tensor(0),tensor(0),,
+1123,tensor(1),tensor(0),easy,Incomplete Information
+1124,tensor(0),tensor(0),,
+1125,tensor(1),tensor(0),hard,Misinterpretation of #Question#
+1126,tensor(0),tensor(1),,
+1127,tensor(1),tensor(1),hard,Misinterpretation of #Question#
+1128,tensor(0),tensor(1),,
+1129,tensor(1),tensor(0),hard,Misinterpretation of #Question#
+1130,tensor(0),tensor(0),,
+1131,tensor(0),tensor(0),,
+1132,tensor(1),tensor(0),hard,Misinterpretation of #Question#
+1133,tensor(0),tensor(1),,
+1134,tensor(0),tensor(1),,
+1135,tensor(1),tensor(0),medium,Misinterpretation of #Question#
+1136,tensor(0),tensor(0),,
+1137,tensor(0),tensor(0),,
+1138,tensor(1),tensor(1),easy,Misinterpretation of #Question#
+1139,tensor(0),tensor(1),,
+1140,tensor(1),tensor(0),hard,Misinterpretation of #Question#
+1141,tensor(1),tensor(1),easy,Misinterpretation of #Question#
+1142,tensor(0),tensor(1),,
+1143,tensor(0),tensor(0),,
+1144,tensor(1),tensor(1),easy,Misinterpretation of #Question#
+1145,tensor(0),tensor(0),,
+1146,tensor(1),tensor(1),easy,Misinterpretation of #Question#
+1147,tensor(0),tensor(0),,
+1148,tensor(1),tensor(1),hard,Incomplete Information
+1149,tensor(1),tensor(1),medium,Misinterpretation of #Question#
+1150,tensor(0),tensor(1),,
+1151,tensor(0),tensor(0),,
+1152,tensor(0),tensor(0),,
+1153,tensor(1),tensor(0),hard,Misinterpretation of #Question#
+1154,tensor(0),tensor(1),,
+1155,tensor(1),tensor(1),hard,Misinterpretation of #Question#
+1156,tensor(0),tensor(0),,
+1157,tensor(1),tensor(1),hard,Misinterpretation of #Question#
+1158,tensor(0),tensor(0),,
+1159,tensor(0),tensor(0),,
+1160,tensor(1),tensor(0),easy,Incomplete Information
+1161,tensor(0),tensor(0),,
+1162,tensor(0),tensor(0),,
+1163,tensor(1),tensor(0),medium,Misinterpretation of #Question#
+1164,tensor(0),tensor(1),,
+1165,tensor(1),tensor(1),hard,Misinterpretation of #Question#
+1166,tensor(1),tensor(1),medium,Misinterpretation of #Question#
+1167,tensor(0),tensor(0),,
+1168,tensor(1),tensor(0),medium,Incomplete Information
+1169,tensor(0),tensor(0),,
+1170,tensor(1),tensor(0),hard,Misinterpretation of #Question#
+1171,tensor(0),tensor(1),,
+1172,tensor(1),tensor(1),hard,Misinterpretation of #Question#
+1173,tensor(0),tensor(0),,
+1174,tensor(1),tensor(1),hard,Misinterpretation of #Question#
+1175,tensor(0),tensor(0),,
+1176,tensor(1),tensor(0),medium,Misinterpretation of #Question#
+1177,tensor(0),tensor(0),,
+1178,tensor(1),tensor(0),hard,Misinterpretation of #Question#
+1179,tensor(0),tensor(0),,
+1180,tensor(1),tensor(0),hard,Misinterpretation of #Question#
+1181,tensor(0),tensor(1),,
+1182,tensor(1),tensor(0),medium,Incomplete Information
+1183,tensor(0),tensor(0),,
+1184,tensor(1),tensor(1),easy,Misinterpretation of #Question#
+1185,tensor(1),tensor(1),easy,Incomplete Information
+1186,tensor(1),tensor(0),easy,Misinterpretation of #Question#
+1187,tensor(0),tensor(1),,
+1188,tensor(1),tensor(1),medium,Misinterpretation of #Question#
+1189,tensor(0),tensor(1),,
+1190,tensor(1),tensor(0),hard,Misinterpretation of #Question#
+1191,tensor(0),tensor(0),,
+1192,tensor(1),tensor(0),easy,Misinterpretation of #Question#
+1193,tensor(0),tensor(0),,
+1194,tensor(1),tensor(1),hard,Misinterpretation of #Question#
+1195,tensor(0),tensor(0),,
+1196,tensor(1),tensor(0),easy,Misinterpretation of #Question#
+1197,tensor(0),tensor(0),,
+1198,tensor(1),tensor(0),medium,Misinterpretation of #Question#
+1199,tensor(0),tensor(1),,
+1200,tensor(0),tensor(1),,
+1201,tensor(1),tensor(1),hard,Misinterpretation of #Question#
+1202,tensor(0),tensor(0),,
+1203,tensor(1),tensor(0),easy,Misinterpretation of #Question#
+1204,tensor(0),tensor(0),,
+1205,tensor(1),tensor(0),hard,Incomplete Information
+1206,tensor(0),tensor(0),,
+1207,tensor(1),tensor(0),hard,Misinterpretation of #Question#
+1208,tensor(1),tensor(1),hard,Incomplete Information
+1209,tensor(0),tensor(0),,
+1210,tensor(0),tensor(0),,
+1211,tensor(1),tensor(0),easy,Incomplete Information
+1212,tensor(0),tensor(1),,
+1213,tensor(0),tensor(0),,
+1214,tensor(1),tensor(1),hard,Misinterpretation of #Question#
+1215,tensor(0),tensor(1),,
+1216,tensor(1),tensor(0),hard,Misinterpretation of #Question#
+1217,tensor(1),tensor(0),easy,Methodological and Evidence Fabrication
+1218,tensor(1),tensor(1),medium,Mechanism and Pathway Misattribution
+1219,tensor(0),tensor(0),,
+1220,tensor(0),tensor(0),,
+1221,tensor(1),tensor(1),easy,Misinterpretation of #Question#
+1222,tensor(0),tensor(0),,
+1223,tensor(0),tensor(1),,
+1224,tensor(1),tensor(1),easy,Incomplete Information
+1225,tensor(1),tensor(1),medium,Misinterpretation of #Question#
+1226,tensor(0),tensor(1),,
+1227,tensor(1),tensor(1),easy,Misinterpretation of #Question#
+1228,tensor(1),tensor(1),hard,Misinterpretation of #Question#
+1229,tensor(1),tensor(1),medium,Misinterpretation of #Question#
+1230,tensor(0),tensor(0),,
+1231,tensor(1),tensor(0),hard,Misinterpretation of #Question#
+1232,tensor(0),tensor(0),,
+1233,tensor(0),tensor(1),,
+1234,tensor(1),tensor(0),hard,Misinterpretation of #Question#
+1235,tensor(0),tensor(0),,
+1236,tensor(1),tensor(1),easy,Misinterpretation of #Question#
+1237,tensor(0),tensor(0),,
+1238,tensor(1),tensor(0),hard,Incomplete Information
+1239,tensor(0),tensor(0),,
+1240,tensor(1),tensor(0),easy,Misinterpretation of #Question#
+1241,tensor(0),tensor(0),,
+1242,tensor(1),tensor(0),hard,Misinterpretation of #Question#
+1243,tensor(0),tensor(1),,
+1244,tensor(0),tensor(1),,
+1245,tensor(0),tensor(1),,
+1246,tensor(1),tensor(0),hard,Misinterpretation of #Question#
+1247,tensor(1),tensor(0),hard,Misinterpretation of #Question#
+1248,tensor(0),tensor(0),,
+1249,tensor(1),tensor(0),hard,Misinterpretation of #Question#
+1250,tensor(0),tensor(0),,
+1251,tensor(0),tensor(0),,
+1252,tensor(0),tensor(0),,
+1253,tensor(1),tensor(0),hard,Incomplete Information
+1254,tensor(0),tensor(1),,
+1255,tensor(1),tensor(1),medium,Incomplete Information
+1256,tensor(1),tensor(1),easy,Misinterpretation of #Question#
+1257,tensor(0),tensor(1),,
+1258,tensor(1),tensor(0),hard,Incomplete Information
+1259,tensor(0),tensor(0),,
+1260,tensor(0),tensor(0),,
+1261,tensor(1),tensor(0),hard,Misinterpretation of #Question#
+1262,tensor(0),tensor(0),,
+1263,tensor(1),tensor(0),medium,Misinterpretation of #Question#
+1264,tensor(0),tensor(0),,
+1265,tensor(1),tensor(1),easy,Misinterpretation of #Question#
+1266,tensor(0),tensor(0),,
+1267,tensor(1),tensor(1),medium,Incomplete Information
+1268,tensor(0),tensor(0),,
+1269,tensor(1),tensor(1),easy,Incomplete Information
+1270,tensor(0),tensor(0),,
+1271,tensor(1),tensor(0),medium,Misinterpretation of #Question#
+1272,tensor(0),tensor(0),,
+1273,tensor(0),tensor(0),,
+1274,tensor(1),tensor(0),medium,Misinterpretation of #Question#
+1275,tensor(0),tensor(1),,
+1276,tensor(1),tensor(1),medium,Misinterpretation of #Question#
+1277,tensor(0),tensor(0),,
+1278,tensor(0),tensor(0),,
+1279,tensor(0),tensor(0),,
+1280,tensor(1),tensor(1),easy,Misinterpretation of #Question#
+1281,tensor(0),tensor(0),,
+1282,tensor(1),tensor(0),hard,Misinterpretation of #Question#
+1283,tensor(0),tensor(0),,
+1284,tensor(1),tensor(1),hard,Misinterpretation of #Question#
+1285,tensor(0),tensor(0),,
+1286,tensor(1),tensor(1),hard,Misinterpretation of #Question#
+1287,tensor(0),tensor(0),,
+1288,tensor(0),tensor(1),,
+1289,tensor(1),tensor(0),easy,Incomplete Information
+1290,tensor(0),tensor(1),,
+1291,tensor(0),tensor(1),,
+1292,tensor(1),tensor(1),easy,Mechanism and Pathway Misattribution
+1293,tensor(0),tensor(1),,
+1294,tensor(1),tensor(0),medium,Misinterpretation of #Question#
+1295,tensor(0),tensor(1),,
+1296,tensor(1),tensor(1),easy,Misinterpretation of #Question#
+1297,tensor(1),tensor(1),medium,Misinterpretation of #Question#
+1298,tensor(0),tensor(0),,
+1299,tensor(1),tensor(1),medium,Misinterpretation of #Question#
+1300,tensor(0),tensor(1),,
+1301,tensor(1),tensor(1),hard,Misinterpretation of #Question#
+1302,tensor(0),tensor(1),,
+1303,tensor(1),tensor(0),medium,Incomplete Information
+1304,tensor(1),tensor(1),hard,Misinterpretation of #Question#
+1305,tensor(0),tensor(1),,
+1306,tensor(0),tensor(0),,
+1307,tensor(0),tensor(1),,
+1308,tensor(1),tensor(1),medium,Misinterpretation of #Question#
+1309,tensor(0),tensor(1),,
+1310,tensor(0),tensor(0),,
+1311,tensor(1),tensor(1),hard,Misinterpretation of #Question#
+1312,tensor(1),tensor(0),easy,Misinterpretation of #Question#
+1313,tensor(0),tensor(1),,
+1314,tensor(1),tensor(1),medium,Mechanism and Pathway Misattribution
+1315,tensor(1),tensor(0),medium,Mechanism and Pathway Misattribution
+1316,tensor(0),tensor(1),,
+1317,tensor(1),tensor(0),hard,Misinterpretation of #Question#
+1318,tensor(0),tensor(0),,
+1319,tensor(1),tensor(1),medium,Incomplete Information
+1320,tensor(0),tensor(1),,
+1321,tensor(1),tensor(0),medium,Misinterpretation of #Question#
+1322,tensor(0),tensor(0),,
+1323,tensor(0),tensor(0),,
+1324,tensor(0),tensor(0),,
+1325,tensor(1),tensor(1),hard,Misinterpretation of #Question#
+1326,tensor(1),tensor(1),medium,Misinterpretation of #Question#
+1327,tensor(1),tensor(1),hard,Misinterpretation of #Question#
+1328,tensor(1),tensor(0),medium,Misinterpretation of #Question#
+1329,tensor(0),tensor(0),,
+1330,tensor(0),tensor(1),,
+1331,tensor(1),tensor(0),hard,Misinterpretation of #Question#
+1332,tensor(1),tensor(1),hard,Misinterpretation of #Question#
+1333,tensor(0),tensor(1),,
+1334,tensor(1),tensor(0),easy,Incomplete Information
+1335,tensor(0),tensor(1),,
+1336,tensor(1),tensor(0),easy,Misinterpretation of #Question#
+1337,tensor(0),tensor(0),,
+1338,tensor(0),tensor(1),,
+1339,tensor(1),tensor(0),medium,Mechanism and Pathway Misattribution
+1340,tensor(0),tensor(1),,
+1341,tensor(1),tensor(1),medium,Misinterpretation of #Question#
+1342,tensor(0),tensor(1),,
+1343,tensor(0),tensor(0),,
+1344,tensor(1),tensor(1),hard,Incomplete Information
+1345,tensor(1),tensor(1),medium,Misinterpretation of #Question#
+1346,tensor(0),tensor(0),,
+1347,tensor(0),tensor(0),,
+1348,tensor(1),tensor(0),easy,Misinterpretation of #Question#
+1349,tensor(0),tensor(0),,
+1350,tensor(1),tensor(1),easy,Misinterpretation of #Question#
+1351,tensor(0),tensor(0),,
+1352,tensor(1),tensor(1),hard,Misinterpretation of #Question#
+1353,tensor(0),tensor(1),,
+1354,tensor(1),tensor(0),easy,Misinterpretation of #Question#
+1355,tensor(0),tensor(1),,
+1356,tensor(1),tensor(0),medium,Misinterpretation of #Question#
+1357,tensor(0),tensor(1),,
+1358,tensor(1),tensor(1),medium,Misinterpretation of #Question#
+1359,tensor(0),tensor(0),,
+1360,tensor(1),tensor(1),hard,Misinterpretation of #Question#
+1361,tensor(0),tensor(1),,
+1362,tensor(0),tensor(0),,
+1363,tensor(1),tensor(1),medium,Incomplete Information
+1364,tensor(0),tensor(0),,
+1365,tensor(1),tensor(1),hard,Misinterpretation of #Question#
+1366,tensor(0),tensor(1),,
+1367,tensor(1),tensor(0),hard,Misinterpretation of #Question#
+1368,tensor(0),tensor(0),,
+1369,tensor(1),tensor(0),easy,Misinterpretation of #Question#
+1370,tensor(0),tensor(0),,
+1371,tensor(1),tensor(1),easy,Misinterpretation of #Question#
+1372,tensor(0),tensor(1),,
+1373,tensor(1),tensor(1),medium,Misinterpretation of #Question#
+1374,tensor(1),tensor(0),medium,Misinterpretation of #Question#
+1375,tensor(0),tensor(0),,
+1376,tensor(1),tensor(0),medium,Incomplete Information
+1377,tensor(1),tensor(1),medium,Misinterpretation of #Question#
+1378,tensor(0),tensor(0),,
+1379,tensor(1),tensor(0),hard,Misinterpretation of #Question#
+1380,tensor(0),tensor(1),,
+1381,tensor(1),tensor(0),hard,Incomplete Information
+1382,tensor(0),tensor(1),,
+1383,tensor(0),tensor(1),,
+1384,tensor(1),tensor(1),hard,Misinterpretation of #Question#
+1385,tensor(0),tensor(0),,
+1386,tensor(1),tensor(0),hard,Misinterpretation of #Question#
+1387,tensor(0),tensor(1),,
+1388,tensor(0),tensor(0),,
+1389,tensor(1),tensor(0),hard,Misinterpretation of #Question#
+1390,tensor(0),tensor(1),,
+1391,tensor(1),tensor(1),medium,Misinterpretation of #Question#
+1392,tensor(0),tensor(0),,
+1393,tensor(1),tensor(1),easy,Misinterpretation of #Question#
+1394,tensor(0),tensor(0),,
+1395,tensor(0),tensor(0),,

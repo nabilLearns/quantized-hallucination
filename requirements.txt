@@ -1,3 +1,4 @@
+torch # maybe specify specific version?
 transformers
 accelerate
 datasets
@@ -16,5 +17,4 @@ huggingface_hub
 ollama
 gguf
 hf_xet
-
-torch # maybe specify specific version?
+gputil # for logging gpu hardware metrics

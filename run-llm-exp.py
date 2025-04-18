@@ -18,15 +18,15 @@ import yaml # for cfgs
 import logging
 from abc import ABC, abstractmethod
 import json # final results for a run will be written to a json file
-from time import time
+from time import time, sleep
 
 # script specific (not used in the jupyter notebook version)
 from omegaconf import DictConfig, OmegaConf
 import hydra
 import subprocess
 from huggingface_hub import hf_hub_download
-from multiprocessing import Pool
-import pickle
+from threading import Thread
+import GPUtil
 
 
 # --- Setup logging ---
@@ -209,6 +209,55 @@ def clean_gpu():
     gc.collect()
     t.cuda.empty_cache()
 
+# source: adapted from GPUtil library documentation on Github
+# https://github.com/anderskm/gputil?tab=readme-ov-file#main-functions
+class GPUMonitor(Thread):
+    def __init__(self, delay):
+        super(GPUMonitor, self).__init__()
+        self.stopped = False
+        self.delay = delay # time btwn calls to GPUtil
+        self.metrics = ['gpu_load', 'mem_util', 'mem_used']
+        self.metric_logs = {k:[] for k in self.metrics}
+        self.metric_logs['mem_total'] = GPUtil.getGPUs()[0].memoryTotal
+        
+        self.start()
+    def run(self):
+        while not self.stopped:
+            self.metric_logs['gpu_load'].append(GPUtil.getGPUs()[0].load)
+            self.metric_logs['mem_util'].append(GPUtil.getGPUs()[0].memoryUtil)
+            self.metric_logs['mem_used'].append(GPUtil.getGPUs()[0].memoryUsed)
+            sleep(self.delay)
+    def stop(self):
+        self.stopped = True
+
+def generate_gpu_report(gpu_monitor: GPUMonitor):
+    """statistics on mem_util, gpu_load ; using b/c t.cuda.max_memory_allocated() doesn't work with ollama runtime"""
+    load_logs = np.array(gpu_monitor.metric_logs['gpu_load'])
+    util_logs = np.array(gpu_monitor.metric_logs['mem_util'])
+    mem_used_logs = np.array(gpu_monitor.metric_logs['mem_used'])
+
+    peak_load = np.max(load_logs)
+    avg_load = np.mean(load_logs)
+    std_load = np.std(load_logs)
+
+    peak_util = np.max(util_logs)
+    avg_util = np.mean(util_logs)
+    std_util = np.std(util_logs)
+    
+    gpu_report = {
+        'peak_gpu_load': float(peak_load),
+        'peak_mem_util': float(peak_util),
+        'avg_load': float(avg_load),
+        'avg_util': float(avg_util),
+        'std_load': float(std_load),
+        'std_util': float(std_util),
+        'mem_total': float(gpu_monitor.metric_logs['mem_total']),
+        'load_logs': load_logs.tolist(),
+        'util_logs': util_logs.tolist(),
+        'mem_used_logs': mem_used_logs.tolist()
+    }
+    return gpu_report
+
 # fcn group 1 -> combine into a class?
 def format_prompt_chatml(knowledge: str, question: str, answer: str, prompt_style="original", sys_prompt_style="original") -> List[dict]:
     """Put together world knowledge, a medical question, and a medical answer together in a prompt according to requested prompt_style"""
@@ -287,6 +336,17 @@ def create_prompts(dataset):
     log.info("Prompts are prepared.")
     return all_prompts
 
+def safe_ollama_chat(prompt, model, retries=3, delay=5):
+    for attempt in range(retries):
+        try:
+            response = ollama.chat(model=model, messages=prompt)
+            return response
+        except Exception as e:
+            print(f"[Attempt {attempt+1}] Ollama error: {e}")
+            if attempt < retries - 1:
+                time.sleep(delay)
+            else:
+                raise
 
 def ollama_classify(prompts, model, experiment_name, BATCH_SIZE, MAX_NEW_TOKENS) -> tuple[list,list]:
     log.info(f"Starting Ollama Hallucination Detection for {model}.")
@@ -294,10 +354,7 @@ def ollama_classify(prompts, model, experiment_name, BATCH_SIZE, MAX_NEW_TOKENS)
     latencies = []
     for i, prompt in enumerate(prompts):
         start = time()
-        response = ollama.chat(
-            model=model,
-            messages=prompt
-        )
+        response = safe_ollama_chat(prompt, model) #ollama.chat(model=model,messages=prompt)
         duration = time() - start
         if i % 10 == 0:
             log.info(f"Inference for {i}th prompt took {duration:.2f}s | Response: {response['message']['content'].strip()}")
@@ -353,8 +410,8 @@ def extract_prediction(generated_text):
         return 0
     elif '1' in text_start:
         return 1
-    elif '2' in text_start:
-        return 2
+    #elif '2' in text_start: # not including 'not sure' option yet
+    #    return 2
     else:
         #print(f"Could not parse '0' or '1' from model output: {text}")
         return -1
@@ -417,7 +474,7 @@ def get_hallucination_info(info_type: str, dataset, all_ground_truths: list[int]
         return hallucination_category
 
 # TODO: rename fcn to something less ambiguous（＾ｖ＾）
-def process_results(dataset, predictions: list[int]) -> dict:
+def process_results(dataset, predictions: list[int], raw_responses: list[str|int]) -> dict:
     """
     # --- Assemble final results ---
     # example
@@ -439,16 +496,24 @@ def process_results(dataset, predictions: list[int]) -> dict:
     
     valid_idxs = [idx for idx, (gt,pred) in enumerate(raw_gt_pred_pairs) if pred != -1] # explicit [0, 2, 3, 4, 7, 110]
     gt_pred_pairs = raw_gt_pred_pairs[valid_idxs] #filter_invalid_pairs(raw_gt_pred_pairs)
-    valid_hal_difficulty = [raw_hallucination_difficulty[valid_idx] for valid_idx in valid_idxs]
-    valid_hal_category = [raw_hallucination_category[valid_idx] for valid_idx in valid_idxs]
+    valid_hal_difficulty = [raw_hallucination_difficulty[valid_idx] for valid_idx in valid_idxs] # i.e. [None, None, "hard", None, "easy", ...]
+    valid_hal_category = [raw_hallucination_category[valid_idx] for valid_idx in valid_idxs] # i.e. [None, None, "Misinterpretation", None, "Incorrect Assumption"]
 
+    valid_questions = [dataset['Question'][idx//2] for idx in valid_idxs]
+    valid_gt_answers = [dataset['Ground Truth'][idx//2] for idx in valid_idxs] # should have duplicates, because 2idxs correspnod to one dataset row
+    valid_hl_answers = [dataset['Hallucinated Answer'][idx//2] for idx in valid_idxs]
+    valid_responses = [raw_responses[idx] for idx in valid_idxs]
+    
     # include the ground truth a
     
     valid_df = pd.DataFrame({
         'gt': [gt for (gt,pred) in gt_pred_pairs],
         'predictions': [pred for (gt,pred) in gt_pred_pairs],
         'difficulty': valid_hal_difficulty,
-        'category': valid_hal_category
+        'category': valid_hal_category,
+        'llm_response': valid_responses,
+        'gt_answer': valid_gt_answers,
+        'hallucinated_answer': valid_hl_answers,
     })
 
     processed_results = {
@@ -722,6 +787,7 @@ def generate_latency_report(latencies: list):
     latency_var = latencies.var()
     total_exp_inf_time_sec = latencies.sum()
     throughput_prompts_per_sec =  latencies.shape[0] / total_exp_inf_time_sec
+
     latency_report = {
         'latencies': latencies,
         'latency_mean': latency_mean,
@@ -771,6 +837,7 @@ def run_experiment(cfg: DictConfig) -> None:
     log.info("####################################")
     log.info(f"Hydra output directory: {os.getcwd()}")
     log.info(f"RUNTIME: {cfg.runtime.name}")
+    exp_start_time = time()
     # --- Configuration --- # cfg values are selected by hydra after launched from cli   
     DATASET_NAME = cfg.dataset.name
     # pass to DatasetLoader
@@ -822,47 +889,47 @@ def run_experiment(cfg: DictConfig) -> None:
 
     # --- Load Model, Tokenizer ---
     # Inference with HuggingFace runtime (AutoTokenizer.from_pretrained(...), AutoModelForCausalLM.from_pretrained(...))
-    if RUNTIME == 'hugging_face':
-        model, tokenizer = ModelLoader(model_family=MODEL_NAME, 
-                                       quantization_method=QUANTIZATION_METHOD,
-                                       quantization_level=QUANTIZATION_LEVEL,
-                                       base_hf_id=base_hf_id,
-                                       gguf_hf_id=gguf_hf_id,
-                                       gguf_fpath=gguf_fpath,
-                                       model_specific_tokenizer_kwargs=model_specific_tokenizer_kwargs).build_model_and_tokenizer()
-        assert model != None
-        assert tokenizer != None
-        # --- Construct HF Pipeline ---
-        classifier = pipeline(
-            'text-generation',
-            model=model,
-            tokenizer=tokenizer,
-            device_map="auto"
-        )
-        log.info("SUCCESS! MODEL AND TOKENIZER LOADED")
+    #if RUNTIME == 'hugging_face':
+    #    model, tokenizer = ModelLoader(model_family=MODEL_NAME, 
+    #                                   quantization_method=QUANTIZATION_METHOD,
+    #                                   quantization_level=QUANTIZATION_LEVEL,
+    #                                   base_hf_id=base_hf_id,
+    #                                   gguf_hf_id=gguf_hf_id,
+    #                                   gguf_fpath=gguf_fpath,
+    #                                   model_specific_tokenizer_kwargs=model_specific_tokenizer_kwargs).build_model_and_tokenizer()
+    #    assert model != None
+    #    assert tokenizer != None
+    #    # --- Construct HF Pipeline ---
+    #    classifier = pipeline(
+    #        'text-generation',
+    #        model=model,
+    #        tokenizer=tokenizer,
+    #        device_map="auto"
+    #    )
+    #    log.info("SUCCESS! MODEL AND TOKENIZER LOADED")
     
     # Inference with llama-cpp-python runtime ; dropping due to bad latency (~TTFT) results when testing on jnb ; could not load weights to GPU, and CPU inference latency was ~130[s] per prompt (ノ-_-)ノ ミ ┴┴
     
     # --- Clear memory stats *before* inference, for acc. logging of GPU usage *during* inference ---
     gc.collect()
-    try:
-        t.cuda.empty_cache()
-        t.cuda.reset_peak_memory_stats()
-    except:
-        pass # perhaps device = 'cpu'
+    #try:
+    #    t.cuda.empty_cache()
+    #    t.cuda.reset_peak_memory_stats()
+    #except:
+    #    pass # perhaps device = 'cpu'
 
     # --- Inference --- todo: add more inference related metrics like latency, throughput?
     # Hugging Face Runtime
+    #if RUNTIME == 'hugging_face':
+    #    outputs = classify_med_answers(prompts=all_prompts,
+    #                                   classifier=classifier,
+    #                                   tokenizer=tokenizer,
+    #                                   experiment_name=EXPERIMENT_NAME,
+    #                                   BATCH_SIZE=BATCH_SIZE,
+    #                                   MAX_NEW_TOKENS=MAX_NEW_TOKENS)
     outputs = None
-    if RUNTIME == 'hugging_face':
-        outputs = classify_med_answers(prompts=all_prompts,
-                                       classifier=classifier,
-                                       tokenizer=tokenizer,
-                                       experiment_name=EXPERIMENT_NAME,
-                                       BATCH_SIZE=BATCH_SIZE,
-                                       MAX_NEW_TOKENS=MAX_NEW_TOKENS)
-
-    elif RUNTIME == 'ollama':
+    gpu_monitor = GPUMonitor(5)
+    if RUNTIME == 'ollama':
         log.info(f"Downloading {OLLAMA_FILE} from HF")
         ollama.pull(OLLAMA_FILE)
         log.info(f"Download Complete!")
@@ -871,31 +938,30 @@ def run_experiment(cfg: DictConfig) -> None:
                                              experiment_name=EXPERIMENT_NAME,
                                              BATCH_SIZE=BATCH_SIZE,
                                              MAX_NEW_TOKENS=MAX_NEW_TOKENS)
-    
+    gpu_monitor.stop()
     # --- Log Peak GPU Memory Usage --- note: re-factor into function?
+    gpu_report = generate_gpu_report(gpu_monitor)
     # Hardware Performance
-    peak_memory_gb = None
-    try:
-        peak_memory_bytes = t.cuda.max_memory_allocated() # not relevant for CPU
-        peak_memory_gb = peak_memory_bytes / (2**30) # 2^30B in one GB
-        log.info(f"Peak GPU Memory Allocated: {peak_memory_gb} GB")
-    except:
-        pass
+    #oeak_memory_gb = None
+    #try:
+    #    peak_memory_bytes = t.cuda.max_memory_allocated() # not relevant for CPU
+    #    peak_memory_gb = peak_memory_bytes / (2**30) # 2^30B in one GB
+    #    log.info(f"Peak GPU Memory Allocated: {peak_memory_gb} GB")
+    #except Exception as e:
+    #    log.info(f"Was not able to get Peak GPU. Error: {e}")
+    #    pass
 
     # --- Extract Prediction ---
     predictions, raw_outputs = extract_all_binary_predictions(outputs)
 
     # --- Compute Model Performance Metrics (fnr, tpr, acc, prec, rec, f1, abstention rate) ---
-    log.info(" --- Computing Model Performance Metrics --- ")
-    processed_results = process_results(dataset, predictions)
-    log.info("Processed Results")
-    log.info(pprint.pp(processed_results))
-    
+    processed_results = process_results(dataset, predictions, raw_outputs)
+    log.info("Processed Results"); #log.info(pprint.pp(processed_results))
+    log.info(" --- Computing Model Performance Metrics --- ")    
     metrics_dict = calculate_metrics(processed_results['raw_gt_pred_pairs'],
                                      processed_results['gt_pred_pairs'],
                                      processed_results['valid_df'])
-    log.info("Metrics Dict")
-    log.info(pprint.pp(metrics_dict))
+    log.info("Metrics Dict"); log.info(pprint.pp(metrics_dict))
     
     # --- Create Plots ---
     log.info("--- Creating Plots ---")
@@ -936,7 +1002,8 @@ def run_experiment(cfg: DictConfig) -> None:
         'experiment_name': EXPERIMENT_NAME,
         'semi-processed_results': processed_results,
         'metrics': {
-            'gpu_peak_memory_gb': peak_memory_gb,
+            #'gpu_peak_memory_gb': peak_memory_gb,
+            'gpu_report': gpu_report,
             'latency_report': latency_report,
             'cm': metrics_dict['cm'].tolist(),
             'accuracy': metrics_dict['accuracy'],
@@ -960,6 +1027,8 @@ def run_experiment(cfg: DictConfig) -> None:
     
     write_results_to_json(EXPERIMENT_NAME, results)
     log.info("Results Saved! Experiment is Complete.")
+    exp_end_time = time() - exp_start_time
+    log.info(f"[{EXPERIMENT_NAME}] ✅ Finished experiment successfully in {exp_end_time:.2f}s")
 
 if __name__ == "__main__":
     run_experiment()
