@@ -1,6 +1,6 @@
 defaults:
   - model: qwen2.5-7b-it
-  - quantization: uncompressed
+  - quantization: gguf
   - dataset: pqa_labeled
   - runtime: ollama # or hugging_face
   - _self_

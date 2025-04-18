@@ -28,7 +28,6 @@ from huggingface_hub import hf_hub_download
 from threading import Thread
 import GPUtil
 
-
 # --- Setup logging ---
 log = logging.getLogger(__name__)
 logging.getLogger("httpx").setLevel(logging.WARNING) # so we don't get spammed with [httpx] logs during ollama inference
@@ -344,7 +343,7 @@ def safe_ollama_chat(prompt, model, retries=3, delay=5):
         except Exception as e:
             print(f"[Attempt {attempt+1}] Ollama error: {e}")
             if attempt < retries - 1:
-                time.sleep(delay)
+                sleep(delay)
             else:
                 raise
 
@@ -782,19 +781,23 @@ def create_and_save_plots(experiment_name: str, metrics_dict: dict, output_dir:s
 
 def generate_latency_report(latencies: list):
     latencies = np.array(latencies)
-    latency_mean = latencies.mean()
-    latency_std_dev = latencies.std()
-    latency_var = latencies.var()
+    peak_latency = latencies.max()
+    min_latency = latencies.min()
+    avg_latency = latencies.mean()
+    std_dev_latency = latencies.std()
+    var_latency = latencies.var()
     total_exp_inf_time_sec = latencies.sum()
     throughput_prompts_per_sec =  latencies.shape[0] / total_exp_inf_time_sec
 
     latency_report = {
-        'latencies': latencies,
-        'latency_mean': latency_mean,
-        'latency_std_dev': latency_std_dev,
-        'latency_var': latency_var,
-        'total_exp_inference_time_sec': total_exp_inf_time_sec,
-        'throughput_prompts_per_sec': throughput_prompts_per_sec
+        'latencies': latencies.tolist(),
+        'peak_latency': float(peak_latency),
+        'min_latency': float(min_latency),
+        'avg_latency': float(avg_latency),
+        'std_dev_latecy': float(std_dev_latency),
+        'var_latency': float(var_latency),
+        'total_exp_inference_time_sec': float(total_exp_inf_time_sec),
+        'throughput_prompts_per_sec': float(throughput_prompts_per_sec)
     }
     return latency_report
 
