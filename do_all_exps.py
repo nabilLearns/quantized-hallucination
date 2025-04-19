@@ -5,9 +5,9 @@ import os
 #extra_models = ['qwen2.5-32b-it','qwen2.5-7b-it-med',]
 models = [#'biomistral-7b-med',
           #'gemma3-1b-it',
-          #'gemma3-4b-it',
-          'gemma3-12b-it',
-          'llama3-med',
+          'gemma3-4b-it',
+          #'gemma3-12b-it',
+          #'llama3-med',
           #'qwen2.5-0.5b-it',
           #'qwen2.5-1.5b-it',
           #'qwen2.5-3b-it',
@@ -39,4 +39,4 @@ for model in models:
         print(f"✅ Finished {model} @ {quant} in {duration:.2f} seconds\n")
         #subprocess.call(['python', 'run-llm-exp.py', 'model', model, 'quantization', 'gguf', 'quantization.level', quant])
 exp_runtimes = pd.DataFrame(exp_runtimes)
-exp_runtimes.to_csv('exp_runtimes_A40_90.csv')
+exp_runtimes.to_csv('exp_runtimes_a40_89.csv')
