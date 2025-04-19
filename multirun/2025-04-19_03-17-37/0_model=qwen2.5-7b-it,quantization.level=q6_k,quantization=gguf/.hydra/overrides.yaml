@@ -1,0 +1,3 @@
+- model=qwen2.5-7b-it
+- quantization=gguf
+- quantization.level=q6_k

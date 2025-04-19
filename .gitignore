@@ -2,7 +2,7 @@
 *.gguf
 
 # Hydra outputs (i.e. logs from multiruns)
-multirun/
+#multirun/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
