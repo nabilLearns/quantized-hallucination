@@ -4,7 +4,7 @@ import pandas
 import os
 #extra_models = ['qwen2.5-32b-it','qwen2.5-7b-it-med',]
 models = [#'biomistral-7b-med',
-          'gemma3-1b-it',
+          #'gemma3-1b-it',
           'gemma3-4b-it',
           #'gemma3-12b-it',
           #'llama3-med',
