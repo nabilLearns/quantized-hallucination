@@ -12,13 +12,19 @@ models = [#'biomistral-7b-med',
           #'llama3-med',
           
           #'qwen2.5-0.5b-it',
-          #'qwen2.5-1.5b-it',
+          'qwen2.5-1.5b-it',
           
-          'qwen2.5-3b-it',
+          #'qwen2.5-3b-it',
           #'qwen2.5-7b-it',
           #'qwen2.5-14b-it'
           ]
-gguf_quants = ['q8_0', 'q6_k', 'q5_k_m', 'q4_k_m', 'q3_k_m', 'q2_k']
+gguf_quants = [
+        #'q8_0',
+        #'q6_k',
+        #'q5_k_m',
+        #'q4_k_m',
+        #'q3_k_m',
+        'q2_k']
 
 # example cli input for one run
 # python run-llm-exp.py --multirun model=biomistral-7b-med quantization=gguf quantization.level=q5_k_m
