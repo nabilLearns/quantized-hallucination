@@ -1,6 +1,6 @@
 import subprocess
 import time
-import pandas
+import pandas as pd
 import os
 #extra_models = ['qwen2.5-32b-it','qwen2.5-7b-it-med',]
 models = [#'biomistral-7b-med',
@@ -14,9 +14,10 @@ models = [#'biomistral-7b-med',
           #'qwen2.5-0.5b-it',
           #'qwen2.5-1.5b-it',
           
-          #'qwen2.5-3b-it',
-          'qwen2.5-7b-it',
-          'qwen2.5-14b-it']
+          'qwen2.5-3b-it',
+          #'qwen2.5-7b-it',
+          #'qwen2.5-14b-it'
+          ]
 gguf_quants = ['q8_0', 'q6_k', 'q5_k_m', 'q4_k_m', 'q3_k_m', 'q2_k']
 
 # example cli input for one run
