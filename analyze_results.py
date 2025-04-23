@@ -33,16 +33,19 @@ model_families = unique_model_families(results_dir='results')
 # family_to_rdirlist is an intermediate variable needed to construct family_to_json_list
 family_to_rdirlist = {family:[] for family in model_families} # Example model families: 'qwen2.5', 'gemma3'
 family_idx_pairs=[(extract_family(dirname), idx) for idx, dirname in enumerate(os.listdir('results'))]
-for idx, family in enumerate(family_idx_pairs):
-  family_to_rdirlist[family].append(os.listdir('results')[idx])
+for (family, idx) in family_idx_pairs:
+    family_to_rdirlist[family].append(os.listdir('results')[idx])
+
+#pp(family_to_rdirlist);quit()
 
 # family_to_rjsonlist <- family_to_rdirlist
 family_to_rjsonlist = {family:[] for family in model_families}    
 for family in model_families:
     family_rjsons = [] # family results jsons
     for idx, rdir in enumerate(family_to_rdirlist[family]):
-        rdir_files:[str,str] = os.listdir(os.path.join('results', rdir))
-        assert len(rdir_files) == 2 # [*.csv, *.json]
+        rdir_files = os.listdir(os.path.join('results', rdir))
+        #print(rdir_files)
+        #assert len(rdir_files) == 2 # [*.csv, *.json]
         for file in rdir_files:
             if 'json' in file:
                 family_rjsons.append(os.path.join('results',rdir,file))
@@ -132,19 +135,24 @@ def kquant_from_exp_name(exp_name:str) -> str:
     """
     return exp_name.split('-')[-1]
 
-def get_family_to_metrics(metric: str = 'accuracy'):
+def get_family_to_metrics(metric: str | list[str,str] = 'accuracy', metric_type: str = 'model'):
     family_to_metrics = {family: None for family in model_families} # { family : {f'{family}-{param_size}' : { k-quant : metric } } }
-    metric:str = 'accuracy'
+    #metric:str = 'accuracy'
     for family in model_families:
         model_summaries = {} # {f'{family}-{param_size}' : { k-quant : metric } }
-        for jsonf in family_to_jsonlist[family]:
+        for jsonf in family_to_rjsonlist[family]:
             data = get_results_dict(jsonf)
             exp_name = clean_experiment_name(data['experiment_name'])
             model = model_name_from_exp_name(exp_name) # e.g., Qwen2.5-0.5b, Qwen2.5-7b, ...
             kquant = kquant_from_exp_name(exp_name)
             
             kquant_to_metric = {} #{2: None, 3: None, 4: None, 5: None, 6: None, 8: None}
-            kquant_to_metric[kquant] = data['metrics'][metric]
+            #kquant_to_metric[kquant] = data['metrics'][metric]
+
+            if metric_type == 'model':
+                kquant_to_metric[kquant] = data['metrics'][metric]
+            elif metric_type == 'system':
+                kquant_to_metric[kquant] = data['metrics'][metric[0]][metric[1]] # e.g, data['metrics']['gpu_report']['peak_gpu_usage']
             
             if model_summaries.get(model,None) == None:
                 model_summaries[model] = kquant_to_metric
@@ -154,105 +162,113 @@ def get_family_to_metrics(metric: str = 'accuracy'):
         family_to_metrics[family] = model_summaries
     return family_to_metrics
 
-family_to_metrics = get_family_to_metrics('accuracy')
-
 
 # --- Create Plots [Still in the works 🚧] ---
-def plot_4_families(metric: str = 'accuracy'):
-    pass
-def plot_7b_models():
-    pass
+def plot_metric_for_family(family_name: str, metric_name:str, ax):
+    family_to_metrics = get_family_to_metrics(metric_name)
+    model_names = sorted(family_to_metrics[family_name].keys())
+    for model in model_names:
+        k_to_val = family_to_metrics[family_name][model]
+        ax.plot(sorted(k_to_val), [k_to_val[k] for k in sorted(k_to_val)], '.-.', label=model)
+    ax.set_title(f'{family_name}')
+    ax.set_xlabel('k-quantization level [bits]')
+    rename_model_metric = {'accuracy': 'Accuracy (%)',
+                           'precision': 'Precision',
+                           'recall': 'Recall',
+                           'f1-score': 'F1-Score',
+                           'abstention_rate': 'Abstention Rate'}
+    ax.set_ylabel(f'{rename_model_metric[metric_name]}')
+    ax.set_ylim(0,1)
+    ax.legend()
 
-# --- 4 families in 1 figure ---
-qwen_models = list(family_model_summaries['qwen2.5'].keys()) # 1.5, 0.5, 3, 7
-# sort the dictionary of bit-accuracy (key-value) pairs by the key
-qwen15 = {bit: family_model_summaries['qwen2.5'][qwen_models[0]][bit] for bit in sorted(family_model_summaries['qwen2.5'][qwen_models[0]])}
-qwen05 = {bit: family_model_summaries['qwen2.5'][qwen_models[1]][bit] for bit in sorted(family_model_summaries['qwen2.5'][qwen_models[1]])}
-qwen30 = {bit: family_model_summaries['qwen2.5'][qwen_models[2]][bit] for bit in sorted(family_model_summaries['qwen2.5'][qwen_models[2]])}
-qwen70 = {bit: family_model_summaries['qwen2.5'][qwen_models[3]][bit] for bit in sorted(family_model_summaries['qwen2.5'][qwen_models[3]])}
+def plot_system_metric_for_family(family_name: str, metric_name: list[str,str], ax):
+    family_to_metrics = get_family_to_metrics(metric_name, metric_type='system')
+    model_names = sorted(family_to_metrics[family_name].keys())
+    for model in model_names:
+        k_to_val = family_to_metrics[family_name][model]
+        ax.plot(sorted(k_to_val), [k_to_val[k] for k in sorted(k_to_val)], '.-.', label=model)
+    ax.set_title(f'{family_name}')
+    ax.set_xlabel('k-quantization level [bits]')
+    rename_sys_metric = {'peak_mem_util': 'Peak memory utilization (%)',
+                         'avg_load': 'Average GPU Load (%)',
+                         'avg_latency': 'Avg. Latency (s)',
+                         'throughput_prompts_per_sec': 'Throughput (prompts/s)'}
+    ax.set_ylabel(f'{rename_sys_metric[metric_name[1]]}')
+    if rename_sys_metric[metric_name[1]] == 'Throughput (prompts/s)':
+        #print([k_to_val[k] for k in sorted(k_to_val)])
+        ax.set_ylim(0,max(1,3+max([k_to_val[k] for k in sorted(k_to_val)])))
+    else:
+        print(metric_name[1])
+        ax.set_ylim(0,1)
+    ax.legend()
+    
+def create_all_families_comparison_plot(family_names: list[str], metric_name: str|list[str,str], metric_type: str | list[str,str] = 'model'):
+    fig, ax = plt.subplots(2, 2, figsize=(8,8))
+    if metric_type == 'model':
+        plot_metric_for_family(family_names[0], metric_name, ax[0,0])
+        plot_metric_for_family(family_names[1], metric_name, ax[0,1])
+        plot_metric_for_family(family_names[2], metric_name, ax[1,0])
+        plot_metric_for_family(family_names[3], metric_name, ax[1,1])
+        
+    elif metric_type == 'system':
+        plot_system_metric_for_family(family_names[0], metric_name, ax[0,0])
+        plot_system_metric_for_family(family_names[1], metric_name, ax[0,1])
+        plot_system_metric_for_family(family_names[2], metric_name, ax[1,0])
+        plot_system_metric_for_family(family_names[3], metric_name, ax[1,1])
 
-gemma_models = list(family_model_summaries['gemma3'].keys()) # 12, 1, 4
-gemma12 = {bit: family_model_summaries['gemma3'][gemma_models[0]][bit] for bit in sorted(family_model_summaries['gemma3'][gemma_models[0]])}
-gemma1 = {bit: family_model_summaries['gemma3'][gemma_models[1]][bit] for bit in sorted(family_model_summaries['gemma3'][gemma_models[1]])}
-gemma4 = {bit: family_model_summaries['gemma3'][gemma_models[2]][bit] for bit in sorted(family_model_summaries['gemma3'][gemma_models[2]])}
+    rename_metric = {'accuracy': 'Accuracy (%)',
+                     'precision': 'Precision',
+                     'recall': 'Recall',
+                     'f1-score': 'F1-Score',
+                     'abstention_rate': 'Abstentation Rate',
+                     'peak_mem_util': 'Peak Memory Utilization (%)',
+                     'avg_load': 'Average GPU Load (%)',
+                     'avg_latency': 'Avg. Latency (s)',
+                     'throughput_prompts_per_sec': 'Throughput (prompts/s)'}
+    if metric_type == 'system':
+        metric_name = metric_name[1]
+    plt.suptitle(f'{rename_metric[metric_name]} vs. Quantization Across Families')
+    plt.tight_layout()
+    plt.savefig(f'plots/kquant_vs_{metric_name}.png')
 
-biomistral_models = list(family_model_summaries['biomistral'].keys())
-biomistral7_med = {bit: family_model_summaries['biomistral'][biomistral_models[0]][bit] for bit in sorted(family_model_summaries['biomistral'][biomistral_models[0]])}
+def gen_plots():
+    # k-quantization vs. model performanace
+    create_all_families_comparison_plot(['qwen2.5', 'gemma3', 'llama3', 'biomistral'], 'accuracy')
+    create_all_families_comparison_plot(['qwen2.5', 'gemma3', 'llama3', 'biomistral'], 'precision')
+    create_all_families_comparison_plot(['qwen2.5', 'gemma3', 'llama3', 'biomistral'], 'recall')
+    create_all_families_comparison_plot(['qwen2.5', 'gemma3', 'llama3', 'biomistral'], 'f1-score')
+    create_all_families_comparison_plot(['qwen2.5', 'gemma3', 'llama3', 'biomistral'], 'abstention_rate')
+    create_all_families_comparison_plot(['qwen2.5', 'gemma3', 'llama3', 'biomistral'], 'accuracy')
+    logging.info("Performance plots have been generated and saved.")
 
-llama3_med_models = list(family_model_summaries['llama3'].keys())
-llama3_med = {bit: family_model_summaries['llama3'][llama3_med_models[0]][bit] for bit in sorted(family_model_summaries['llama3'][llama3_med_models[0]])}
+    
+    # k-quantization vs. system performance
+    """
+    peak_mem_util: feasible deployment | will the model fit on our hardware?
+    avg_gpu_load: GPU energy efficiency | how efficiently is the GPU being used during inference? Can I scale this model up to many inferences without wasting GPU cycles? I'm concerned about Energy usage, cooling, cost-per-inference
+    std_dev_gpu_load: Real-time systems may have hard requirements on latency ; can I expect stable, consistent resource usage? unexpected spikes?
+    avg_latency: UX | key metric for user experience ; can we use this in a live-application? will this model meet our response time SLAs?
+    throughput: sclability under load 
+    """
+    
+    # peak mem util
+    create_all_families_comparison_plot(family_names=['qwen2.5', 'gemma3', 'llama3', 'biomistral'],
+                                        metric_name=['gpu_report', 'peak_mem_util'],
+                                        metric_type='system')
 
-fig, ax = plt.subplots(2, 2, figsize=(12,10))
-# qwen
-ax[0][0].plot(qwen05.keys(), qwen05.values(), '.-.', label='qwen2.5-0.5b')
-ax[0][0].plot(qwen15.keys(), qwen15.values(), '.-.', label='qwen2.5-1.5b')
-ax[0][0].plot(qwen30.keys(), qwen30.values(), '.-.', label='qwen2.5-3b')
-ax[0][0].plot(qwen70.keys(), qwen70.values(), '.-.', label='qwen2.5-7b')#, color='red')
-ax[0][0].legend()
-ax[0][0].set_title('Qwen2.5')
-ax[0][0].set_ylabel('Accuracy [%]')
-ax[0][0].set_xlabel('k-quantization level [bits]')
-ax[0][0].set_ylim(0, 1)
-
-# gemma
-ax[0][1].plot(gemma1.keys(), gemma1.values(), '.-.', label='gemma3-1b')
-ax[0][1].plot(gemma4.keys(), gemma4.values(), '.-.', label='gemma3-4b')
-ax[0][1].plot(gemma12.keys(), gemma12.values(), '.-.', label='gemma3-12b')
-ax[0][1].legend()
-ax[0][1].set_title('Gemma-3')
-ax[0][1].set_ylabel('Accuracy [%]')
-ax[0][1].set_xlabel('k-quantization level [bits]')
-ax[0][1].set_ylim(0, 1)
-
-# llama
-ax[1][0].plot(llama3_med.keys(), llama3_med.values(), '.-.', label='llama3_med_7B')
-ax[1][0].legend()
-ax[1][0].set_title('Llama3-med')
-ax[1][0].set_ylabel('Accuracy [%]')
-ax[1][0].set_xlabel('k-quantization level [bits]')
-ax[1][0].set_ylim(0, 1)
-
-# biomistral
-ax[1][1].plot(biomistral7_med.keys(), biomistral7_med.values(), '.-.', label='biomistral_med_7B')
-ax[1][1].legend()
-ax[1][1].set_title('Biomistral-med')
-ax[1][1].set_ylabel('Accuracy [%]')
-ax[1][1].set_xlabel('k-quantization level [bits]')
-ax[1][1].set_ylim(0, 1)
-plt.suptitle('K-Quantization Level vs. Accuracy for Different LLM-Examiner Families')
-plt.tight_layout()
-plt.show()
-
-# --- The three 7B models in 1 figure ---
-qwen_models = list(family_model_summaries['qwen2.5'].keys()) # 1.5, 0.5, 3, 7
-# sort the dictionary of bit-accuracy (key-value) pairs by the key
-qwen15 = {bit: family_model_summaries['qwen2.5'][qwen_models[0]][bit] for bit in sorted(family_model_summaries['qwen2.5'][qwen_models[0]])} # qwen15 := qwen2.5 1.5B parameter model
-qwen05 = {bit: family_model_summaries['qwen2.5'][qwen_models[1]][bit] for bit in sorted(family_model_summaries['qwen2.5'][qwen_models[1]])} # qwen05 := qwen2.5 0.5B parameter model
-qwen30 = {bit: family_model_summaries['qwen2.5'][qwen_models[2]][bit] for bit in sorted(family_model_summaries['qwen2.5'][qwen_models[2]])}
-qwen70 = {bit: family_model_summaries['qwen2.5'][qwen_models[3]][bit] for bit in sorted(family_model_summaries['qwen2.5'][qwen_models[3]])}
-
-gemma_models = list(family_model_summaries['gemma3'].keys()) # 12, 1, 4
-gemma12 = {bit: family_model_summaries['gemma3'][gemma_models[0]][bit] for bit in sorted(family_model_summaries['gemma3'][gemma_models[0]])} # gemma12 := gemma3 12B parameter model
-gemma1 = {bit: family_model_summaries['gemma3'][gemma_models[1]][bit] for bit in sorted(family_model_summaries['gemma3'][gemma_models[1]])}
-gemma4 = {bit: family_model_summaries['gemma3'][gemma_models[2]][bit] for bit in sorted(family_model_summaries['gemma3'][gemma_models[2]])}
-
-biomistral_models = list(family_model_summaries['biomistral'].keys())
-biomistral7_med = {bit: family_model_summaries['biomistral'][biomistral_models[0]][bit] for bit in sorted(family_model_summaries['biomistral'][biomistral_models[0]])}
-
-llama3_med_models = list(family_model_summaries['llama3'].keys())
-llama3_med = {bit: family_model_summaries['llama3'][llama3_med_models[0]][bit] for bit in sorted(family_model_summaries['llama3'][llama3_med_models[0]])}
-
-fig, ax = plt.subplots(1, 1)#, figsize=(12,10))
-# qwen
-ax.plot(qwen70.keys(), qwen70.values(), '.-.', label='qwen2.5-7b')
-ax.plot(llama3_med.keys(), llama3_med.values(), '.-.', label='llama3_med_7B')
-ax.plot(biomistral7_med.keys(), biomistral7_med.values(), '.-.', label='biomistral_med_7B')
-ax.legend()
-#ax[0][0].set_title('Qwen2.5')
-ax.set_ylabel('Accuracy [%]')
-ax.set_xlabel('k-quantization level [bits]')
-ax.set_ylim(0, 1)
-#plt.suptitle('')
-plt.title('K-quantization Level vs. Accuracy for 7B parameter LLM-Examiners',pad=15)
-plt.tight_layout()
-plt.show()
+    # avg_gpu_load
+    create_all_families_comparison_plot(family_names=['qwen2.5', 'gemma3', 'llama3', 'biomistral'],
+                                        metric_name=['gpu_report', 'avg_load'],
+                                        metric_type='system')
+    # avg_latency
+    create_all_families_comparison_plot(family_names=['qwen2.5', 'gemma3', 'llama3', 'biomistral'],
+                                        metric_name=['latency_report', 'avg_latency'],
+                                        metric_type='system')
+    # throughput
+    create_all_families_comparison_plot(family_names=['qwen2.5', 'gemma3', 'llama3', 'biomistral'],
+                                        metric_name=['latency_report', 'throughput_prompts_per_sec'],
+                                        metric_type='system')
+    logging.info("System plots have been generated and saved.")
+    
+if __name__ == "__main__":
+    gen_plots()
