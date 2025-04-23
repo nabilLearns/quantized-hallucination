@@ -1,0 +1,20 @@
+torch # maybe specify specific version?
+transformers
+accelerate
+datasets
+optimum
+peft
+# auto-gptq # not in use (yet)
+bitsandbytes # needs a GPU
+scikit-learn
+matplotlib
+tqdm
+hydra-core
+omegaconf
+pyyaml
+huggingface_hub
+# llama-cpp-python # use it for gguf models ; it seems that HF de-quantizes wts
+ollama
+gguf
+hf_xet
+gputil # for logging gpu hardware metrics

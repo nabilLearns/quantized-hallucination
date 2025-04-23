@@ -1,0 +1,211 @@
+hydra:
+  run:
+    dir: outputs/${now:%Y-%m-%d}${now:%H-%M-%S}
+  sweep:
+    dir: multirun/${now:%Y-%m-%d}_${now:%H-%M-%S}
+    subdir: ${hydra.job.num}_${hydra.job.override_dirname}
+  launcher:
+    _target_: hydra._internal.core_plugins.basic_launcher.BasicLauncher
+  sweeper:
+    _target_: hydra._internal.core_plugins.basic_sweeper.BasicSweeper
+    max_batch_size: null
+    params:
+      model: qwen2.5-7b-it
+      quantization: gguf
+      quantization.level: q8_0, q6_k, q5_k_m, q4_k_m, q3_k_m, q2_k
+  help:
+    app_name: ${hydra.job.name}
+    header: '${hydra.help.app_name} is powered by Hydra.
+
+      '
+    footer: 'Powered by Hydra (https://hydra.cc)
+
+      Use --hydra-help to view Hydra specific help
+
+      '
+    template: '${hydra.help.header}
+
+      == Configuration groups ==
+
+      Compose your configuration from those groups (group=option)
+
+
+      $APP_CONFIG_GROUPS
+
+
+      == Config ==
+
+      Override anything in the config (foo.bar=value)
+
+
+      $CONFIG
+
+
+      ${hydra.help.footer}
+
+      '
+  hydra_help:
+    template: 'Hydra (${hydra.runtime.version})
+
+      See https://hydra.cc for more info.
+
+
+      == Flags ==
+
+      $FLAGS_HELP
+
+
+      == Configuration groups ==
+
+      Compose your configuration from those groups (For example, append hydra/job_logging=disabled
+      to command line)
+
+
+      $HYDRA_CONFIG_GROUPS
+
+
+      Use ''--cfg hydra'' to Show the Hydra config.
+
+      '
+    hydra_help: ???
+  hydra_logging:
+    version: 1
+    formatters:
+      simple:
+        format: '[%(asctime)s][HYDRA] %(message)s'
+    handlers:
+      console:
+        class: logging.StreamHandler
+        formatter: simple
+        stream: ext://sys.stdout
+    root:
+      level: INFO
+      handlers:
+      - console
+    loggers:
+      logging_example:
+        level: DEBUG
+    disable_existing_loggers: false
+  job_logging:
+    version: 1
+    formatters:
+      simple:
+        format: '[%(asctime)s][%(name)s][%(levelname)s] - %(message)s'
+    handlers:
+      console:
+        class: logging.StreamHandler
+        formatter: simple
+        stream: ext://sys.stdout
+      file:
+        class: logging.FileHandler
+        formatter: simple
+        filename: ${hydra.runtime.output_dir}/${hydra.job.name}.log
+    root:
+      level: INFO
+      handlers:
+      - console
+      - file
+    disable_existing_loggers: false
+  env: {}
+  mode: MULTIRUN
+  searchpath: []
+  callbacks: {}
+  output_subdir: .hydra
+  overrides:
+    hydra:
+    - hydra.mode=MULTIRUN
+    task:
+    - model=qwen2.5-7b-it
+    - quantization=gguf
+    - quantization.level=q4_k_m
+  job:
+    name: run-llm-exp
+    chdir: null
+    override_dirname: model=qwen2.5-7b-it,quantization.level=q4_k_m,quantization=gguf
+    id: ???
+    num: ???
+    config_name: config
+    env_set: {}
+    env_copy: []
+    config:
+      override_dirname:
+        kv_sep: '='
+        item_sep: ','
+        exclude_keys: []
+  runtime:
+    version: 1.3.2
+    version_base: '1.3'
+    cwd: /workspace/medical-llm-hallucination-thesis
+    config_sources:
+    - path: hydra.conf
+      schema: pkg
+      provider: hydra
+    - path: /workspace/medical-llm-hallucination-thesis/conf
+      schema: file
+      provider: main
+    - path: ''
+      schema: structured
+      provider: schema
+    output_dir: ???
+    choices:
+      runtime: ollama
+      dataset: pqa_labeled
+      quantization: gguf
+      model: qwen2.5-7b-it
+      hydra/env: default
+      hydra/callbacks: null
+      hydra/job_logging: default
+      hydra/hydra_logging: default
+      hydra/hydra_help: default
+      hydra/help: default
+      hydra/sweeper: basic
+      hydra/launcher: basic
+      hydra/output: default
+  verbose: false
+model:
+  name: qwen2.5-7b-it
+  type: general-reasoning
+  ollama_files:
+    f16: hf.co/bartowski/Qwen2.5-7B-Instruct-GGUF:F16
+    q8_0: hf.co/bartowski/Qwen2.5-7B-Instruct-GGUF:Q8_0
+    q6_k: hf.co/bartowski/Qwen2.5-7B-Instruct-GGUF:Q6_K
+    q5_k_m: hf.co/bartowski/Qwen2.5-7B-Instruct-GGUF:Q5_K_M
+    q5_k_s: hf.co/bartowski/Qwen2.5-7B-Instruct-GGUF:Q5_K_S
+    q4_k_m: hf.co/bartowski/Qwen2.5-7B-Instruct-GGUF:Q4_K_M
+    q4_k_s: hf.co/bartowski/Qwen2.5-7B-Instruct-GGUF:Q4_K_S
+    iq4_xs: hf.co/bartowski/Qwen2.5-7B-Instruct-GGUF:IQ4_XS
+    q3_k_l: hf.co/bartowski/Qwen2.5-7B-Instruct-GGUF:Q3_K_L
+    q3_k_m: hf.co/bartowski/Qwen2.5-7B-Instruct-GGUF:Q3_K_M
+    q3_k_s: hf.co/bartowski/Qwen2.5-7B-Instruct-GGUF:Q3_K_S
+    q2_k: hf.co/bartowski/Qwen2.5-7B-Instruct-GGUF:Q2_K
+  base_hf_id: Qwen/Qwen2.5-7B-Instruct
+  gguf_hf_id: bartowski/Qwen2.5-7B-Instruct-GGUF
+  gguf_files:
+    q8_0: Qwen2.5-7B-Instruct-Q8_0.gguf
+    q6_k: Qwen2.5-7B-Instruct-Q6_K.gguf
+    q5_k_m: Qwen2.5-7B-Instruct-Q5_K_M.gguf
+    q5_k_s: Qwen2.5-7B-Instruct-Q5_K_S.gguf
+    q4_k_m: Qwen2.5-7B-Instruct-Q4_K_M.gguf
+    q4_k_s: Qwen2.5-7B-Instruct-Q4_K_S.gguf
+    iq4_xs: Qwen2.5-7B-Instruct-IQ4_XS.gguf
+    q3_k_l: Qwen2.5-7B-Instruct-Q3_K_L.gguf
+    q3_k_m: Qwen2.5-7B-Instruct-Q3_K_M.gguf
+    q3_k_s: Qwen2.5-7B-Instruct-Q3_K_S.gguf
+    q2_k: Qwen2.5-7B-Instruct-Q2_K.gguf
+  tokenizer_kwargs:
+    padding_side: left
+quantization:
+  method: gguf
+  level: q4_k_m
+  model_load_kwargs:
+    pass_dynamic_config: true
+dataset:
+  name: UTAustin-AIHealth/MedHallu
+  split: pqa_labeled
+runtime:
+  name: ollama
+device: auto
+max_samples: 1000
+batch_size: 8
+max_new_tokens: 3
+results_filename: results.json

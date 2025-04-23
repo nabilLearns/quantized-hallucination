@@ -1,0 +1,40 @@
+name: llama3-med
+type: med-ft
+ollama_files:
+  f16: hf.co/mradermacher/Llama3-Med42-8B-GGUF:F16
+  q8_0: hf.co/mradermacher/Llama3-Med42-8B-GGUF:Q8_0
+  q6_k: hf.co/mradermacher/Llama3-Med42-8B-GGUF:Q6_K
+  q5_k_m: hf.co/mradermacher/Llama3-Med42-8B-GGUF:Q5_K_M
+  q5_k_s: hf.co/mradermacher/Llama3-Med42-8B-GGUF:Q5_K_S
+  q4_k_m: hf.co/mradermacher/Llama3-Med42-8B-GGUF:Q4_K_M
+  q4_k_s: hf.co/mradermacher/Llama3-Med42-8B-GGUF:Q4_K_S
+  iq4_xs: hf.co/mradermacher/Llama3-Med42-8B-GGUF:IQ4_XS
+  q3_k_l: hf.co/mradermacher/Llama3-Med42-8B-GGUF:Q3_K_L
+  q3_k_m: hf.co/mradermacher/Llama3-Med42-8B-GGUF:Q3_K_M
+  q3_k_s: hf.co/mradermacher/Llama3-Med42-8B-GGUF:Q3_K_S
+  q2_k: hf.co/mradermacher/Llama3-Med42-8B-GGUF:Q2_K
+
+
+# needed for hugging face runtime
+base_hf_id: m42-health/Llama3-Med42-8B
+gguf_hf_id: mradermacher/Llama3-Med42-8B-GGUF
+gguf_files:
+    q8_0: Llama3-Med42-8B.Q8_0.gguf     # yes
+    q6_k: Llama3-Med42-8B.Q6_K.gguf     # yes
+    q5_k_m: Llama3-Med42-8B.Q5_K_M.gguf # yes
+    q5_k_s: Llama3-Med42-8B.Q5_K_S.gguf # yes
+    q4_k_m: Llama3-Med42-8B.Q4_K_M.gguf # yes
+    q4_k_s: Llama3-Med42-8B.Q4_K_S.gguf # yes
+    iq4_xs: Llama3-Med42-8B.IQ4_XS.gguf # yes
+    q3_k_l: Llama3-Med42-8B.Q3_K_L.gguf # yes
+    q3_k_m: Llama3-Med42-8B.Q3_K_M.gguf        # yes
+    q3_k_s: Llama3-Med42-8B.Q3_K_S.gguf        # yes
+    q2_k: Llama3-Med42-8B.Q2_K.gguf     # yes
+    
+    #iq3_m: Qwen2.5-7B-Instruct-IQ3_M.gguf      # ???
+    #iq3_xs: Qwen2.5-7B-Instruct-IQ3_XS.gguf    # ???
+    #iq2_m: Qwen2.5-7B-Instruct-IQ2_M.gguf      # ???
+    #q2_k_l: Qwen2.5-7B-Instruct-Q2_K_L.gguf    d# ???
+
+tokenizer_kwargs:
+    padding_side: {}

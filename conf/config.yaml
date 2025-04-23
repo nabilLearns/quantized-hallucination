@@ -1,0 +1,24 @@
+defaults:
+  - model: qwen2.5-7b-it
+  - quantization: gguf
+  - dataset: pqa_labeled
+  - runtime: ollama # or hugging_face
+  - _self_
+
+device: auto
+max_samples: 1000
+batch_size: 8
+max_new_tokens: 3
+results_filename: 'results.json'
+
+hydra:
+  sweeper:
+    params:
+      model: qwen2.5-7b-it
+      quantization: gguf
+      quantization.level: q8_0, q6_k, q5_k_m, q4_k_m, q3_k_m, q2_k
+  run:
+    dir: outputs/${now:%Y-%m-%d}${now:%H-%M-%S}
+  sweep:
+    dir: multirun/${now:%Y-%m-%d}_${now:%H-%M-%S}
+    subdir: ${hydra.job.num}_${hydra.job.override_dirname}

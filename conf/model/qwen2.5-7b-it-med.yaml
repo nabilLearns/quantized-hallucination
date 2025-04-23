@@ -1,0 +1,17 @@
+name: qwen2.5-7b-it-med
+type: med-ft
+ollama_files:
+  f16: hf.co/prithivMLmods/Qwen-UMLS-7B-Instruct-GGUF:F16
+  q8_0: hf.co/prithivMLmods/Qwen-UMLS-7B-Instruct-GGUF:Q8_0
+  q6_k: None
+  q5_k_m: hf.co/prithivMLmods/Qwen-UMLS-7B-Instruct-GGUF:Q5_K_M
+  q5_k_s: None
+  q5_0: None
+  q4_k_m: hf.co/prithivMLmods/Qwen-UMLS-7B-Instruct-GGUF:Q4_K_M
+  q4_k_s: None
+  q4_0: None
+  iq4_xs: None
+  q3_k_l: None
+  q3_k_m: None
+  q3_k_s: None
+  q2_k: None
