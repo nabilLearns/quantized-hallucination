@@ -3,50 +3,165 @@ import json
 from pprint import pp
 import matplotlib.pyplot as plt
 import seaborn as sns
+import logging
 
-model_families = list(set([r.split('-')[0] for r in os.listdir('results')]))
-family_x_idx_pairs=[(r.split('-')[0], idx) for idx, r in enumerate(os.listdir('results'))]
+# original
+#model_families = list(set([r.split('-')[0] for r in os.listdir('results')]))
+
+# higher quality code?
+def extract_family(dirname: str) -> str:
+    """
+    Examples
+    Input: qwen2.5-1.5b-it_gguf_q3_k_m_ollama_pqa_labeled
+    Ouput: qwen2.5
+
+    Input: llama3-med_gguf_q6_k_ollama_pqa_labeled
+    Output: llama3
+    """
+    return dirname.split('-')[0]
+    
+def all_family_names(results_dir:str) -> list[str]:
+    return [extract_family(d) for d in os.listdir(results_dir)]
+    
+def unique_model_families(results_dir:str) -> list[str]:
+    return list(set(all_family_names(results_dir)))
+    
+model_families = unique_model_families(results_dir='results')
 
 # GOAL: transform models as follows: models={model_family:list_of_directories} -> {model_family:list_of_json_files}
-# initialize models
-models = {m:[] for m in model_families}
-# add families as keys
-for (m,i) in family_x_idx_pairs:
-    models[m].append(os.listdir('results')[i])
-# transform values : path to model folder -> path to json results file
-for m in models.keys():
-    # models[m]: list of folder names corresponding to the the model family m
-    
-    # get json files from each folder
-    m_files = []
-    for idx, folder in enumerate(models[m]):
-        subfolder_files = os.listdir(os.path.join('results', models[m][idx])) # [*.csv, *.json]
-        for file in subfolder_files:
-            if 'json' in file:
-                m_files.append(os.path.join('results',models[m][idx],file))
-    models[m] = m_files
 
-# get accuracy for all families, models, k-quants
-family_model_summaries = {k:None for k in model_families}
+# family_to_rdirlist is an intermediate variable needed to construct family_to_json_list
+family_to_rdirlist = {family:[] for family in model_families} # Example model families: 'qwen2.5', 'gemma3'
+family_idx_pairs=[(extract_family(dirname), idx) for idx, dirname in enumerate(os.listdir('results'))]
+for idx, family in enumerate(family_idx_pairs):
+  family_to_rdirlist[family].append(os.listdir('results')[idx])
+
+# family_to_rjsonlist <- family_to_rdirlist
+family_to_rjsonlist = {family:[] for family in model_families}    
 for family in model_families:
-    model_summaries = {}
-    for m in models[family]:
-        curr_summary = {}
-        with open(m, 'r') as file:
-            curr_data = json.load(file)
-        exp_name = curr_data['experiment_name'].replace('qwen','Qwen').replace('_ollama_pqa_labeled', '').replace('it_gguf_', '').replace('q','').replace('_k_m', '').replace('_k','').replace('_0','').replace('med_gguf_', '').replace('7b_gguf_', '')
-        model = '-'.join(exp_name.split('-')[:-1])
-        bits = exp_name.split('-')[-1]
-        curr_summary[bits] = curr_data['metrics']['accuracy'] # METRIC
-        if model_summaries.get(model, None) == None:
-            model_summaries[model] = curr_summary
-        else:
-            model_summaries[model].update(curr_summary)
-        print(f"Model: {model}, Bits: {bits}, Acc: {curr_data['metrics']['accuracy']}") # METRIC
-    if family_model_summaries.get(family,None) == None:
-        family_model_summaries[family] = model_summaries
-    else:
-        family_model_summaries[family].update(model_summaries)
+    family_rjsons = [] # family results jsons
+    for idx, rdir in enumerate(family_to_rdirlist[family]):
+        rdir_files:[str,str] = os.listdir(os.path.join('results', rdir))
+        assert len(rdir_files) == 2 # [*.csv, *.json]
+        for file in rdir_files:
+            if 'json' in file:
+                family_rjsons.append(os.path.join('results',rdir,file))
+    family_to_rjsonlist[family] = family_rjsons
+
+# --- Metrics ---
+def get_results_dict(jsonf:str) -> dict:
+    """
+    Example: 
+    Input: 'results/biomistral-7b_gguf_q6_k_ollama_pqa_labeled/results_biomistral-7b_gguf_q6_k_ollama_pqa_labeled.json'
+    Output: {
+        'experiment_name': EXPERIMENT_NAME,
+        'semi-processed_results': processed_results,
+        'metrics': {
+            #'gpu_peak_memory_gb': peak_memory_gb,
+            'gpu_report': gpu_report,
+            'latency_report': latency_report,
+            'cm': metrics_dict['cm'].tolist(),
+            'accuracy': metrics_dict['accuracy'],
+            'precision': metrics_dict['precision'],
+            'recall': metrics_dict['recall'], 
+            'f1-score': metrics_dict['f1-score'],
+            'support': metrics_dict['support'],
+            'abstention_rate': metrics_dict['abstention_rate'], 
+            'fn_difficulty_counts': metrics_dict['fn_difficulty_counts'].to_dict(),
+            'fn_category_counts': metrics_dict['fn_category_counts'].to_dict(),
+            'tp_difficulty_counts': metrics_dict['tp_difficulty_counts'].to_dict(),
+            'tp_category_counts': metrics_dict['tp_category_counts'].to_dict(),
+            'fnr_difficulty': metrics_dict['fnr_difficulty'].to_dict(),
+            'fnr_category': metrics_dict['fnr_category'].to_dict(),
+            'tpr_difficulty': metrics_dict['tpr_difficulty'].to_dict(),
+            'tpr_category': metrics_dict['tpr_category'].to_dict()
+        }
+    }
+    """
+    data = None
+    try:
+        with open(jsonf, 'r') as file:
+            data = json.load(file)
+    except Exception as e:
+        print(f"Could not load {jsonf}: {e}")
+        raise
+    assert data != None 
+    return data
+
+def clean_experiment_name(messy_name: str) -> str:
+    """
+    converts messy_name -> f'{family}-{size}-{k-quant}' format
+    
+    Example
+    Input: biomistral-7b_gguf_q6_k_ollama_pqa_labeled
+    Output: biomistral-7b-6
+    
+    Input: gemma3-1b-it_gguf_q8_0_ollama_pqa_labeled
+    Ouput: gemma3-1b-8
+    
+    Input: qwen2.5-0.5b-it_gguf_q3_k_m_ollama_pqa_labeled
+    Output: Qwen2.5-0.5b-3
+    """
+    return (messy_name.replace('qwen','Qwen')
+            .replace('_ollama_pqa_labeled','')
+            .replace('it_gguf_','')
+            .replace('q','')
+            .replace('_k_m', '')
+            .replace('_k','')
+            .replace('_0','')
+            .replace('med_gguf_', '')
+            .replace('7b_gguf_', '7b-')
+           )
+    
+def model_name_from_exp_name(exp_name:str) -> str:
+    """
+    Examples:
+    Qwen2.5-0.5b-3 -> Qwen2.5-0.5b, 
+    gemma3-12b-8   -> gemma3-12b,
+    gemma3-4b-2    -> gemma3-4b,
+    """
+    return '-'.join(exp_name.split('-')[:-1])
+
+def kquant_from_exp_name(exp_name:str) -> str:
+    """Example: 
+    Input: gemma3-4b-2
+    Output: '2'
+    
+    Input: biomistral-7b-5
+    Ouput: '5'
+    """
+    return exp_name.split('-')[-1]
+
+def get_family_to_metrics(metric: str = 'accuracy'):
+    family_to_metrics = {family: None for family in model_families} # { family : {f'{family}-{param_size}' : { k-quant : metric } } }
+    metric:str = 'accuracy'
+    for family in model_families:
+        model_summaries = {} # {f'{family}-{param_size}' : { k-quant : metric } }
+        for jsonf in family_to_jsonlist[family]:
+            data = get_results_dict(jsonf)
+            exp_name = clean_experiment_name(data['experiment_name'])
+            model = model_name_from_exp_name(exp_name) # e.g., Qwen2.5-0.5b, Qwen2.5-7b, ...
+            kquant = kquant_from_exp_name(exp_name)
+            
+            kquant_to_metric = {} #{2: None, 3: None, 4: None, 5: None, 6: None, 8: None}
+            kquant_to_metric[kquant] = data['metrics'][metric]
+            
+            if model_summaries.get(model,None) == None:
+                model_summaries[model] = kquant_to_metric
+            else:
+                model_summaries[model].update(kquant_to_metric)
+                
+        family_to_metrics[family] = model_summaries
+    return family_to_metrics
+
+family_to_metrics = get_family_to_metrics('accuracy')
+
+
+# --- Create Plots [Still in the works 🚧] ---
+def plot_4_families(metric: str = 'accuracy'):
+    pass
+def plot_7b_models():
+    pass
 
 # --- 4 families in 1 figure ---
 qwen_models = list(family_model_summaries['qwen2.5'].keys()) # 1.5, 0.5, 3, 7
