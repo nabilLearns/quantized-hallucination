@@ -233,7 +233,7 @@ def create_all_families_comparison_plot(family_names: list[str], metric_name: st
 # plot accuracy vs. peak gpu usage
 #print(f"Peak Memory Used: {df['metrics']['gpu_report']['peak_mem_util'] * df['metrics']['gpu_report']['mem_total'] / 1000:.2f} GB")
 def plot_accuracy_vs_peak_mem():
-    acc_latency_points = []
+    acc_mem_points = []
 
     for family in model_families:
         for jsonf in family_to_rjsonlist[family]:
@@ -246,7 +246,7 @@ def plot_accuracy_vs_peak_mem():
                 model = model_name_from_exp_name(exp_name)
                 k = kquant_from_exp_name(exp_name)
                 label=f'{model}-{k}'
-                acc_latency_points.append({
+                acc_mem_points.append({
                     'peak_mem': peak_mem,
                     'accuracy': acc,
                     'label': label,
@@ -260,10 +260,10 @@ def plot_accuracy_vs_peak_mem():
     texts = [] # for adjusttext library
     
     # find pareto set
-    for i, p1 in enumerate(acc_latency_points):
-        for j, p2 in enumerate(acc_latency_points):
+    for i, p1 in enumerate(acc_mem_points):
+        for j, p2 in enumerate(acc_mem_points):
             if (p2["accuracy"] >= p1["accuracy"] and p2["peak_mem"] <= p1["peak_mem"] and (p2["accuracy"] > p1["accuracy"] or p2["peak_mem"] < p1["peak_mem"])):
-                acc_latency_points[i]["dominated"] = True
+                acc_mem_points[i]["dominated"] = True
                 break
                 
     family_colors = {
@@ -274,7 +274,7 @@ def plot_accuracy_vs_peak_mem():
     }
 
     # plot points, one point at a time
-    for point in acc_latency_points:
+    for point in acc_mem_points:
         color = family_colors[point["family"]]        
         size = 50 if not point["dominated"] else 20
         edge_color = 'black' if not point["dominated"] else 'none'
