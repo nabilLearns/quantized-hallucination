@@ -230,6 +230,89 @@ def create_all_families_comparison_plot(family_names: list[str], metric_name: st
     plt.tight_layout()
     plt.savefig(f'plots/kquant_vs_{metric_name}.png')
 
+# plot accuracy vs. peak gpu usage
+#print(f"Peak Memory Used: {df['metrics']['gpu_report']['peak_mem_util'] * df['metrics']['gpu_report']['mem_total'] / 1000:.2f} GB")
+def plot_accuracy_vs_peak_mem():
+    acc_latency_points = []
+
+    for family in model_families:
+        for jsonf in family_to_rjsonlist[family]:
+            try:
+                data = get_results_dict(jsonf)
+                acc = data['metrics']['accuracy']
+                #latency = data['metrics']['latency_report']['avg_latency']
+                peak_mem = data['metrics']['gpu_report']['peak_mem_util'] * data['metrics']['gpu_report']['mem_total'] / 1000
+                exp_name = clean_experiment_name(data['experiment_name'])
+                model = model_name_from_exp_name(exp_name)
+                k = kquant_from_exp_name(exp_name)
+                label=f'{model}-{k}'
+                acc_latency_points.append({
+                    'peak_mem': peak_mem,
+                    'accuracy': acc,
+                    'label': label,
+                    'family': family,
+                    'dominated': False
+                })
+            except Exception as e:
+                print(f"Skipping {jsonf}: {e}")
+
+    plt.figure(figsize=(10,6))
+    texts = [] # for adjusttext library
+    
+    # find pareto set
+    for i, p1 in enumerate(acc_latency_points):
+        for j, p2 in enumerate(acc_latency_points):
+            if (p2["accuracy"] >= p1["accuracy"] and p2["peak_mem"] <= p1["peak_mem"] and (p2["accuracy"] > p1["accuracy"] or p2["peak_mem"] < p1["peak_mem"])):
+                acc_latency_points[i]["dominated"] = True
+                break
+                
+    family_colors = {
+        'qwen2.5': 'red',
+        'gemma3': 'green',
+        'biomistral': 'blue',
+        'llama3': 'orange'
+    }
+
+    # plot points, one point at a time
+    for point in acc_latency_points:
+        color = family_colors[point["family"]]        
+        size = 50 if not point["dominated"] else 20
+        edge_color = 'black' if not point["dominated"] else 'none'
+
+        plt.scatter(point['peak_mem'], point['accuracy'],
+                    s=size,
+                    color=color,
+                    edgecolors=edge_color,
+                    linewidths=1,
+                    label=point["family"] if not point["dominated"] else "",
+                    alpha=0.8)
+        
+        if not point["dominated"]:
+            texts.append(plt.text(point["peak_mem"], point["accuracy"], point["label"],
+                                 fontsize=8,
+                                 weight='bold',
+                                 bbox=dict(boxstyle='round,pad=0.2', fc='white', ec='gray', lw=0.5)))
+
+    adjust_text(texts,
+                only_move={'text': 'xy'},
+                arrowprops=dict(arrowstyle='-', color='black', lw=0.5))
+    
+    plt.xlabel('Peak Memory Usage [GB]', fontsize=12)
+    plt.ylabel('Accuracy', fontsize=12)
+    plt.title('Accuracy vs. Peak Memory Usage for Quantized LLMs', fontsize=14)
+    plt.grid(True)
+    
+    # Custom legend
+    handles = [plt.Line2D([0], [0], marker='o', color='w', label=fam,
+                          markerfacecolor=color, markersize=10)
+               for fam, color in family_colors.items()]
+    handles.append(plt.Line2D([0], [0], marker='o', color='black', label='Pareto-optimal',
+                              markerfacecolor='none', markersize=10, linestyle='None', markeredgewidth=1.5))
+    
+    plt.legend(handles=handles, title='Model Family')
+    plt.tight_layout()
+    plt.savefig('plots/clean_accuracy_vs_peak_mem.png', dpi=300)
+    
 
 def plot_accuracy_vs_latency():
     acc_latency_points = []
@@ -365,6 +448,7 @@ def gen_plots():
     print("System plots have been generated and saved.")
     
     plot_accuracy_vs_latency()
+    plot_accuracy_vs_peak_mem()
     print("Tradeoff plots have been generated and saved.")
     #logging.info("System plots have been generated and saved.")
     
