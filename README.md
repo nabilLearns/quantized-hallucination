@@ -1,6 +1,13 @@
-# medical-llm-hallucination-thesis
+# Quantized LLM Hallucination Detection
+### 🧠 About This Project
+This repository contains the full code and results for my undergraduate Engineering Science thesis at the University of Toronto (2025).
 
-This repository evaluates the impact of quantization on the ability of a Large Language Model (LLM) to detect hallucination(s) in answers to medical questions. The `run-llm-exp.py` script support inference and benchmarking across multiple models and quantization schemes. The currently supported models and quantization schemes are listed below in the 'Experiment Design' section, but more models/quantization schemes can be introduced by adding config files for what you'd like to add, to the `conf/` folder in the repo.
+**Title**: Quantized LLM Hallucination Detection  
+**Advisor**: Prof. Andreas Moshovos  
+**Dataset**: MedHallu (medical hallucination QA dataset)  
+**Goal**: Evaluate the effects of k-bit quantization on hallucination detection accuracy, latency, and GPU usage across 4 LLM families (Qwen2.5, Gemma3, LLaMA3, Biomistral).
+
+This repository evaluates the impact of k-bit quantization on the ability of a Large Language Model (LLM) to detect hallucination(s) in answers to medical questions. The `run-llm-exp.py` script support inference and benchmarking across multiple models and quantization schemes. The currently supported models and quantization schemes are listed below in the 'Experiment Design' section, but more models/quantization schemes can be introduced by adding config files for what you'd like to add, to the `conf/` folder in the repo.
 
 Example cli usage of `run-llm-exp.py`, with gemma3 (instruction tuned) 1B parameter model, using the q4_k_m GGUF quantized version.
 ```
