@@ -1,4 +1,4 @@
-# medical-llm-hallucination-thesis
+# Quantized LLM Hallucination Detection
 
 This repository evaluates the impact of quantization on the ability of a Large Language Model (LLM) to detect hallucination(s) in answers to medical questions. The `run-llm-exp.py` script support inference and benchmarking across multiple models and quantization schemes. The currently supported models and quantization schemes are listed below in the 'Experiment Design' section, but more models/quantization schemes can be introduced by adding config files for what you'd like to add, to the `conf/` folder in the repo.
 
