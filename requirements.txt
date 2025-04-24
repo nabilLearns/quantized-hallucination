@@ -18,3 +18,4 @@ ollama
 gguf
 hf_xet
 gputil # for logging gpu hardware metrics
+adjusttext # to prevent overcrowding of labels in tradeoff plots

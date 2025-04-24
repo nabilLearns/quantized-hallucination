@@ -2,8 +2,7 @@ import os
 import json
 from pprint import pp
 import matplotlib.pyplot as plt
-import seaborn as sns
-import logging
+from adjustText import adjust_text # new pip requirement
 
 # original
 #model_families = list(set([r.split('-')[0] for r in os.listdir('results')]))
@@ -198,7 +197,7 @@ def plot_system_metric_for_family(family_name: str, metric_name: list[str,str], 
         #print([k_to_val[k] for k in sorted(k_to_val)])
         ax.set_ylim(0,max(1,3+max([k_to_val[k] for k in sorted(k_to_val)])))
     else:
-        print(metric_name[1])
+        #print(metric_name[1])
         ax.set_ylim(0,1)
     ax.legend()
     
@@ -231,6 +230,136 @@ def create_all_families_comparison_plot(family_names: list[str], metric_name: st
     plt.tight_layout()
     plt.savefig(f'plots/kquant_vs_{metric_name}.png')
 
+
+def plot_accuracy_vs_latency():
+    acc_latency_points = []
+
+    for family in model_families:
+        for jsonf in family_to_rjsonlist[family]:
+            try:
+                data = get_results_dict(jsonf)
+                acc = data['metrics']['accuracy']
+                latency = data['metrics']['latency_report']['avg_latency']
+                exp_name = clean_experiment_name(data['experiment_name'])
+                model = model_name_from_exp_name(exp_name)
+                k = kquant_from_exp_name(exp_name)
+                label=f'{model}-{k}'
+                #dominated = False
+                #acc_latency_points.append((latency, acc, label, family, dominated))
+                acc_latency_points.append({
+                    'latency': latency,
+                    'accuracy': acc,
+                    'label': label,
+                    'family': family,
+                    'dominated': False
+                })
+            except Exception as e:
+                print(f"Skipping {jsonf}: {e}")
+
+    plt.figure(figsize=(10,6))
+    texts = [] # for adjusttext library
+    
+    # find pareto set
+    for i, p1 in enumerate(acc_latency_points):
+        for j, p2 in enumerate(acc_latency_points):
+            if (p2["accuracy"] >= p1["accuracy"] and p2["latency"] <= p1["latency"] and (p2["accuracy"] > p1["accuracy"] or p2["latency"] < p1["latency"])):
+                acc_latency_points[i]["dominated"] = True
+                break
+                
+    family_colors = {
+        'qwen2.5': 'red',
+        'gemma3': 'green',
+        'biomistral': 'blue',
+        'llama3': 'orange'
+    }
+
+    # plot points, one point at a time
+    for point in acc_latency_points:
+        color = family_colors[point["family"]]
+        
+        # pt size
+        #plot_pt_size_by_model_size = False
+        #if plot_pt_size_by_model_size == True:
+        #    model_size_map = {'0.5b': 30, '1b': 35, '1.5b': 40, '3b': 50, '4b': 60, '7b': 70, '12b': 80}
+        #    model_size = point["label"].split('-')[1]
+        #    try:
+        #        size = model_size_map[model_size]
+        #    except:
+        #        size = model_size_map['7b']
+        size = 50 if not point["dominated"] else 20
+        
+        edge_color = 'black' if not point["dominated"] else 'none'
+
+        plt.scatter(point['latency'], point['accuracy'],
+                    s=size, #pt_size,#size,#pt_size,
+                    color=color,
+                    edgecolors=edge_color,
+                    linewidths=1,
+                    label=point["family"] if not point["dominated"] else "",
+                    alpha=0.8)
+        
+        if not point["dominated"]:
+            texts.append(plt.text(point["latency"], point["accuracy"], point["label"],
+                                 fontsize=8,
+                                 #weight='bold',
+                                 bbox=dict(boxstyle='round,pad=0.2', fc='white', ec='gray', lw=0.5)))
+
+
+    adjust_text(texts, only_move={'points': 'y', 'text': 'xy'},
+               arrowprops=dict(arrowstyle='-', color='black', lw=0.5))
+    
+    
+    # plot points, one family at a time
+    #fam_points = {}
+    #for fam in model_families:
+        ##fam_points[fam] = [(x, y, l, d) for x, y, l, f, d in acc_latency_points if f == fam]
+        #fam_points[fam] = [(point['latency'], point['accuracy'], point['label'], point['dominated']) for point in acc_latency_points if point['family'] == fam]
+        #latencies, accuracies, labels, pareto_statuses = zip(*fam_points[fam])
+        #plt.scatter(latencies, accuracies, label=fam, s=20) # s = 6
+        
+        ##fam_sorted_by_acc = sorted(fam_points[fam], key=lambda x: x[1], reverse=True) # highest to lowest acc
+        ##fam_sorted_by_latency = sorted(fam_points[fam], key=lambda x: x[0]) # lowest to highest latency
+
+        ##top_acc_point = fam_sorted_by_acc[0]
+        ##lowest_latency_point = fam_sorted_by_latency[0]
+
+        ##for acc, latency, label in [top_acc_point, lowest_latency_point]:
+        ##    plt.scatter(acc, latency, '.', label=fam, markersize=6)
+        #    #plt.annotate(label, (acc,latency), fontsize=9, weight='bold')
+        
+    # Annotate top points
+    #texts = []
+    #for fam in model_families:
+        #for x, y, label, d in fam_points[fam]: #zip(latencies, accuracies, labels):
+            #if d == False:
+                #texts.append(plt.text(x, y, label, fontsize=8, weight='bold'))
+                ##plt.annotate(label, (x,y), fontsize=8, weight='bold')
+            ##if y > 0.8 or x < 0.2: #or x < 0.2:  # only label the best ones
+            ##    plt.annotate(label, (x, y), fontsize=8, weight='bold')
+
+    plt.xlabel('Average Latency (seconds)', fontsize=12)
+    plt.ylabel('Accuracy', fontsize=12)
+    plt.title('Accuracy vs. Latency for Quantized LLMs', fontsize=14)
+    plt.grid(True)
+    
+
+    handles = [plt.Line2D([0], [0], marker='o', color='w', label=fam,
+                          markerfacecolor=color, markersize=10)
+               for fam, color in family_colors.items()]
+    
+    handles.append(plt.Line2D([0], [0], marker='o', color='black', label='Pareto-optimal',
+                              markerfacecolor='none', markersize=10, linestyle='None', markeredgewidth=1.5))
+    
+    plt.legend(handles=handles, title='Model Family')
+    #plt.legend(title='Model Family')
+    
+    
+    plt.tight_layout()
+    
+    #adjust_text(texts, only_move={'points': 'y', 'text': 'xy'}, arrowprops=dict(arrowstyle='-', color='black', lw=0.5))
+    plt.savefig('plots/clean_accuracy_vs_latency.png', dpi=300)#, bbox_inches='tight')
+    #plt.show()
+
 def gen_plots():
     # k-quantization vs. model performanace
     create_all_families_comparison_plot(['qwen2.5', 'gemma3', 'llama3', 'biomistral'], 'accuracy')
@@ -239,7 +368,8 @@ def gen_plots():
     create_all_families_comparison_plot(['qwen2.5', 'gemma3', 'llama3', 'biomistral'], 'f1-score')
     create_all_families_comparison_plot(['qwen2.5', 'gemma3', 'llama3', 'biomistral'], 'abstention_rate')
     create_all_families_comparison_plot(['qwen2.5', 'gemma3', 'llama3', 'biomistral'], 'accuracy')
-    logging.info("Performance plots have been generated and saved.")
+    #logging.info("Performance plots have been generated and saved.")
+    print("Performance plots have been generated and saved.")
 
     
     # k-quantization vs. system performance
@@ -268,7 +398,11 @@ def gen_plots():
     create_all_families_comparison_plot(family_names=['qwen2.5', 'gemma3', 'llama3', 'biomistral'],
                                         metric_name=['latency_report', 'throughput_prompts_per_sec'],
                                         metric_type='system')
-    logging.info("System plots have been generated and saved.")
+    print("System plots have been generated and saved.")
+    
+    plot_accuracy_vs_latency()
+    print("Tradeoff plots have been generated and saved.")
+    #logging.info("System plots have been generated and saved.")
     
 if __name__ == "__main__":
     gen_plots()
