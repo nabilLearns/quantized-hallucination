@@ -244,8 +244,6 @@ def plot_accuracy_vs_latency():
                 model = model_name_from_exp_name(exp_name)
                 k = kquant_from_exp_name(exp_name)
                 label=f'{model}-{k}'
-                #dominated = False
-                #acc_latency_points.append((latency, acc, label, family, dominated))
                 acc_latency_points.append({
                     'latency': latency,
                     'accuracy': acc,
@@ -286,12 +284,13 @@ def plot_accuracy_vs_latency():
         #        size = model_size_map[model_size]
         #    except:
         #        size = model_size_map['7b']
+        
         size = 50 if not point["dominated"] else 20
         
         edge_color = 'black' if not point["dominated"] else 'none'
 
         plt.scatter(point['latency'], point['accuracy'],
-                    s=size, #pt_size,#size,#pt_size,
+                    s=size,
                     color=color,
                     edgecolors=edge_color,
                     linewidths=1,
@@ -301,64 +300,29 @@ def plot_accuracy_vs_latency():
         if not point["dominated"]:
             texts.append(plt.text(point["latency"], point["accuracy"], point["label"],
                                  fontsize=8,
-                                 #weight='bold',
+                                 weight='bold',
                                  bbox=dict(boxstyle='round,pad=0.2', fc='white', ec='gray', lw=0.5)))
 
 
-    adjust_text(texts, only_move={'points': 'y', 'text': 'xy'},
-               arrowprops=dict(arrowstyle='-', color='black', lw=0.5))
+    adjust_text(texts,
+                only_move={'text': 'xy'},
+                arrowprops=dict(arrowstyle='-', color='black', lw=0.5))
     
-    
-    # plot points, one family at a time
-    #fam_points = {}
-    #for fam in model_families:
-        ##fam_points[fam] = [(x, y, l, d) for x, y, l, f, d in acc_latency_points if f == fam]
-        #fam_points[fam] = [(point['latency'], point['accuracy'], point['label'], point['dominated']) for point in acc_latency_points if point['family'] == fam]
-        #latencies, accuracies, labels, pareto_statuses = zip(*fam_points[fam])
-        #plt.scatter(latencies, accuracies, label=fam, s=20) # s = 6
-        
-        ##fam_sorted_by_acc = sorted(fam_points[fam], key=lambda x: x[1], reverse=True) # highest to lowest acc
-        ##fam_sorted_by_latency = sorted(fam_points[fam], key=lambda x: x[0]) # lowest to highest latency
-
-        ##top_acc_point = fam_sorted_by_acc[0]
-        ##lowest_latency_point = fam_sorted_by_latency[0]
-
-        ##for acc, latency, label in [top_acc_point, lowest_latency_point]:
-        ##    plt.scatter(acc, latency, '.', label=fam, markersize=6)
-        #    #plt.annotate(label, (acc,latency), fontsize=9, weight='bold')
-        
-    # Annotate top points
-    #texts = []
-    #for fam in model_families:
-        #for x, y, label, d in fam_points[fam]: #zip(latencies, accuracies, labels):
-            #if d == False:
-                #texts.append(plt.text(x, y, label, fontsize=8, weight='bold'))
-                ##plt.annotate(label, (x,y), fontsize=8, weight='bold')
-            ##if y > 0.8 or x < 0.2: #or x < 0.2:  # only label the best ones
-            ##    plt.annotate(label, (x, y), fontsize=8, weight='bold')
-
     plt.xlabel('Average Latency (seconds)', fontsize=12)
     plt.ylabel('Accuracy', fontsize=12)
     plt.title('Accuracy vs. Latency for Quantized LLMs', fontsize=14)
     plt.grid(True)
     
-
+    # Custom legend
     handles = [plt.Line2D([0], [0], marker='o', color='w', label=fam,
                           markerfacecolor=color, markersize=10)
                for fam, color in family_colors.items()]
-    
     handles.append(plt.Line2D([0], [0], marker='o', color='black', label='Pareto-optimal',
                               markerfacecolor='none', markersize=10, linestyle='None', markeredgewidth=1.5))
     
     plt.legend(handles=handles, title='Model Family')
-    #plt.legend(title='Model Family')
-    
-    
     plt.tight_layout()
-    
-    #adjust_text(texts, only_move={'points': 'y', 'text': 'xy'}, arrowprops=dict(arrowstyle='-', color='black', lw=0.5))
-    plt.savefig('plots/clean_accuracy_vs_latency.png', dpi=300)#, bbox_inches='tight')
-    #plt.show()
+    plt.savefig('plots/clean_accuracy_vs_latency.png', dpi=300)
 
 def gen_plots():
     # k-quantization vs. model performanace
