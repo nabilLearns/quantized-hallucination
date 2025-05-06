@@ -164,13 +164,24 @@ def get_family_to_metrics(metric: str | list[str,str] = 'accuracy', metric_type:
 
 # --- Create Plots [Still in the works 🚧] ---
 def plot_metric_for_family(family_name: str, metric_name:str, ax):
+    """
+    For the provided family_name (e.g., Qwen2.5) and metric_name (e.g., accuracy), generate a plot as follows:
+    x axis: goes from 8-bit to 2-bit quantization, so as a reader moves their eyes along the x-axis they see y-vals corresponding to a greater extent of quantization
+    y axis: [metric_name]
+    """
     family_to_metrics = get_family_to_metrics(metric_name)
     model_names = sorted(family_to_metrics[family_name].keys())
     for model in model_names:
         k_to_val = family_to_metrics[family_name][model]
-        ax.plot(sorted(k_to_val), [k_to_val[k] for k in sorted(k_to_val)], '.-.', label=model)
+        x_vals = ['8', '6', '5', '4', '3', '2']
+        y_vals = [k_to_val.get(k, None) for k in x_vals]
+        ax.plot(x_vals, y_vals, '.-.', label=model)
+        ax.set_xticks(x_vals)
+        ax.set_xticklabels([f'{k}-bit' for k in x_vals])
+        #sorted_k = sorted([int(k) for k in k_to_val.keys()])
+        #ax.plot(sorted_k[::-1], [k_to_val[str(k)] for k in sorted_k[::-1]], '.-.', label=model) # ax.plot(sorted(k_to_val), [k_to_val[k] for k in sorted(k_to_val)], '.-.', label=model)
     ax.set_title(f'{family_name}')
-    ax.set_xlabel('k-quantization level [bits]')
+    ax.set_xlabel('Quantization level [bits] \n (right = more compression)')  #ax.set_xlabel('k-quantization level [bits]')
     rename_model_metric = {'accuracy': 'Accuracy (%)',
                            'precision': 'Precision',
                            'recall': 'Recall',
@@ -185,9 +196,16 @@ def plot_system_metric_for_family(family_name: str, metric_name: list[str,str], 
     model_names = sorted(family_to_metrics[family_name].keys())
     for model in model_names:
         k_to_val = family_to_metrics[family_name][model]
-        ax.plot(sorted(k_to_val), [k_to_val[k] for k in sorted(k_to_val)], '.-.', label=model)
+        # plot x-axis from 8-bit to 2-bit quantization
+        x_vals = ['8', '6', '5', '4', '3', '2']
+        y_vals = [k_to_val.get(k, None) for k in x_vals]
+        ax.plot(x_vals, y_vals, '.-.', label=model)
+        ax.set_xticks(x_vals)
+        ax.set_xticklabels([f'{k}-bit' for k in x_vals])
+        #sorted_k = sorted([int(k) for k in k_to_val.keys()], reverse=True)
+        #ax.plot(sorted_k, [k_to_val[str(k)] for k in sorted_k], '.-.', label=model) # ax.plot(sorted(k_to_val), [k_to_val[k] for k in sorted(k_to_val)], '.-.', label=model)
     ax.set_title(f'{family_name}')
-    ax.set_xlabel('k-quantization level [bits]')
+    ax.set_xlabel('Quantization level [bits] \n (right = more compression)') #ax.set_xlabel('k-quantization level [bits]')
     rename_sys_metric = {'peak_mem_util': 'Peak memory utilization (%)',
                          'avg_load': 'Average GPU Load (%)',
                          'avg_latency': 'Avg. Latency (s)',
@@ -227,7 +245,7 @@ def create_all_families_comparison_plot(family_names: list[str], metric_name: st
     if metric_type == 'system':
         metric_name = metric_name[1]
     plt.suptitle(f'{rename_metric[metric_name]} vs. Quantization Across Families')
-    plt.tight_layout()
+    plt.tight_layout() #plt.subplots_adjust(wspace=0.3, hspace=0.3, right=0.95)
     plt.savefig(f'plots/kquant_vs_{metric_name}.png')
 
 # plot accuracy vs. peak gpu usage
