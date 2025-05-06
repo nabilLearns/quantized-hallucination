@@ -50,21 +50,29 @@ All models (except skipped ones) are evaluated with the following GGUF quantizat
 `q8_0`, `q6_k`, `q5_k_m`, `q4_k_m`, `q3_k_m`, `q2_k`
 
 ## Results
-### Completed
+
+The plots below show the tradeoff between accuracy and a system performance metric (e.g., latency, peak GPU memory usage).
+Pareto dominant model configurations are annotated within each plot.
+
+<p align="center">
+  <img src="plots/clean_accuracy_vs_latency.png" width="600"/>
+  <br/>
+  <em>Accuracy vs. Latency Pareto Frontier</em>
+</p>
+
+<p align="center">
+  <img src="plots/clean_accuracy_vs_peak_mem.png" width="600"/>
+  <br/>
+  <em>Accuracy vs. Peak Memory Usage</em>
+</p>
+
+### Completed Experiment Runs
 - **BioMistral 7B** — 6 quantization levels
 - **LLaMA3-med** — 5 quantization levels (missing q2_k)
 - **Gemma3-12B** — 6 quantization levels
 - **Gemma3-4B** — 6 quantization levels
 - **Gemma3-1B** — 6 quantization levels
 - **Qwen2.5-7B-it** — 6 quantization levels
-
-### In Progress
-
-- Qwen2.5-0.5B-it
-- Qwen2.5-1.5B-it
-
-## Fixes and Next Steps
-* Fixed calculation of FP's, FN's
-* Complete runs for all compressed model(s) and write results to a file, changing: (1) extent of quantization, (2) quantization technique, (3) model
-
-
+- **Qwen2.5-3B-it** — 6 quantization levels
+- **Qwen2.5-1.5B-it** — 6 quantization levels
+- **Qwen2.5-0.5B-it** — 6 quantization levels
