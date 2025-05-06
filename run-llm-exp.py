@@ -27,6 +27,7 @@ import subprocess
 from huggingface_hub import hf_hub_download
 from threading import Thread
 import GPUtil
+import asyncio
 
 # --- Setup logging ---
 log = logging.getLogger(__name__)
@@ -347,42 +348,52 @@ def safe_ollama_chat(prompt, model, retries=3, delay=5):
             else:
                 raise
 
-def ollama_classify(prompts, model, experiment_name, BATCH_SIZE, MAX_NEW_TOKENS) -> tuple[list,list]:
+async def ollama_classify(prompts, model, experiment_name, BATCH_SIZE, MAX_NEW_TOKENS) -> tuple[list,list]:
     log.info(f"Starting Ollama Hallucination Detection for {model}.")
     outputs = []
     latencies = []
     for i, prompt in enumerate(prompts):
         start = time()
-        response = safe_ollama_chat(prompt, model) #ollama.chat(model=model,messages=prompt)
+        try:
+            response = await asyncio.wait_for(
+                asyncio.to_thread(lambda: safe_ollama_chat(prompt, model)), timeout=30
+            ) #ollama.chat(model=model,messages=prompt)
+        except asyncio.TimeoutError:
+            log.info(f"[Timeout] Inference for {i}th prompt exceeded 30s timeout.")
+            response = None
         duration = time() - start
         if i % 10 == 0:
-            log.info(f"Inference for {i}th prompt took {duration:.2f}s | Response: {response['message']['content'].strip()}")
+            if response != None:
+                log.info(f"Inference for {i}th prompt took {duration:.2f}s | Response: {response['message']['content'].strip()}")
         latencies.append(duration)
-        outputs.append(response['message']['content'].strip())
+        try:
+            outputs.append(response['message']['content'].strip())
+        except:
+            outputs.append(None)
     log.info("Inference Done!")
     return outputs, latencies
 
 # this is for hugging_face runtime ; deprecated for now
 # TODO: measure inference, throughput, TTS?
-def classify_med_answers(prompts, classifier, tokenizer, experiment_name: str, BATCH_SIZE=8, MAX_NEW_TOKENS=3) -> list:
-    log.info(f"Starting batch inference on {len(prompts)} prompts...")
-    log.info(type(prompts))
-    outputs = []
-    num_batches=math.ceil(len(prompts) / BATCH_SIZE)
-    with t.no_grad():
+#def classify_med_answers(prompts, classifier, tokenizer, experiment_name: str, BATCH_SIZE=8, MAX_NEW_TOKENS=3) -> list:
+#    log.info(f"Starting batch inference on {len(prompts)} prompts...")
+#    log.info(type(prompts))
+#    outputs = []
+#    num_batches=math.ceil(len(prompts) / BATCH_SIZE)
+#    with t.no_grad():
         # show inference progress bar with tqdm
-        for batch_idx in tqdm(range(num_batches), desc=f"Classifying Batches: {experiment_name}", unit="batch"):
-            start_idx = batch_idx * BATCH_SIZE
-            end_idx = min(start_idx + BATCH_SIZE, len(prompts))
-            batch_prompts = prompts[start_idx:end_idx]
-            batch_output = classifier(batch_prompts,
-                                      #batch_size=BATCH_SIZE # redundant
-                                      max_new_tokens=MAX_NEW_TOKENS,
-                                      pad_token_id=tokenizer.pad_token_id,
-                                      eos_token_id=tokenizer.eos_token_id,
-                                      do_sample=False,
-                                      repetition_penalty=1.2) 
-            outputs.extend(batch_output)
+#        for batch_idx in tqdm(range(num_batches), desc=f"Classifying Batches: {experiment_name}", unit="batch"):
+#            start_idx = batch_idx * BATCH_SIZE
+#            end_idx = min(start_idx + BATCH_SIZE, len(prompts))
+#            batch_prompts = prompts[start_idx:end_idx]
+#            batch_output = classifier(batch_prompts,
+                                      ##batch_size=BATCH_SIZE # redundant
+#                                      max_new_tokens=MAX_NEW_TOKENS,
+#                                      pad_token_id=tokenizer.pad_token_id,
+#                                      eos_token_id=tokenizer.eos_token_id,
+#                                      do_sample=False,
+#                                      repetition_penalty=1.2) 
+#            outputs.extend(batch_output)
     
         # all at once
         #outputs = classifier(
@@ -394,8 +405,8 @@ def classify_med_answers(prompts, classifier, tokenizer, experiment_name: str, B
         #    do_sample=False,
         #    repetition_penalty=1.2
         #)
-    log.info("Inference complete.")
-    return outputs
+#    log.info("Inference complete.")
+#    return outputs
 
 # fcn group 2 -> combine into a class?
 def extract_prediction(generated_text):
@@ -931,19 +942,27 @@ def run_experiment(cfg: DictConfig) -> None:
     #                                   BATCH_SIZE=BATCH_SIZE,
     #                                   MAX_NEW_TOKENS=MAX_NEW_TOKENS)
     outputs = None
-    gpu_monitor = GPUMonitor(5)
+    # --- Log Peak GPU Memory Usage --- note: re-factor into function?
+    gpu_monitor = None
+    try:
+        gpu_monitor = GPUMonitor(5)
+    except:
+        pass
     if RUNTIME == 'ollama':
         log.info(f"Downloading {OLLAMA_FILE} from HF")
         ollama.pull(OLLAMA_FILE)
         log.info(f"Download Complete!")
-        outputs, latencies = ollama_classify(prompts=all_prompts,
+        outputs, latencies = asyncio.run(ollama_classify(prompts=all_prompts,
                                              model=OLLAMA_FILE,
                                              experiment_name=EXPERIMENT_NAME,
                                              BATCH_SIZE=BATCH_SIZE,
-                                             MAX_NEW_TOKENS=MAX_NEW_TOKENS)
-    gpu_monitor.stop()
-    # --- Log Peak GPU Memory Usage --- note: re-factor into function?
-    gpu_report = generate_gpu_report(gpu_monitor)
+                                             MAX_NEW_TOKENS=MAX_NEW_TOKENS))
+    gpu_report = None
+    try:
+        gpu_monitor.stop()
+        gpu_report = generate_gpu_report(gpu_monitor)
+    except:
+        pass
     # Hardware Performance
     #oeak_memory_gb = None
     #try:
