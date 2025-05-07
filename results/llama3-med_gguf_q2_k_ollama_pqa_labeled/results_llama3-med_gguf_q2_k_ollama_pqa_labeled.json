@@ -1,0 +1,622 @@
+{
+    "experiment_name": "llama3-med_gguf_q2_k_ollama_pqa_labeled",
+    "semi-processed_results": {
+        "all_ground_truths": [
+            1,
+            0,
+            1,
+            0,
+            1,
+            0,
+            1,
+            0,
+            1,
+            0,
+            1,
+            0,
+            1,
+            0,
+            1,
+            0,
+            1,
+            0,
+            1,
+            0,
+            1,
+            0,
+            1,
+            0,
+            1,
+            0,
+            1,
+            0,
+            1,
+            0,
+            1,
+            0,
+            1,
+            0,
+            1,
+            0,
+            1,
+            0,
+            1,
+            0
+        ],
+        "raw_gt_pred_pairs": [
+            [
+                1,
+                1
+            ],
+            [
+                0,
+                1
+            ],
+            [
+                1,
+                0
+            ],
+            [
+                0,
+                1
+            ],
+            [
+                1,
+                1
+            ],
+            [
+                0,
+                1
+            ],
+            [
+                1,
+                -1
+            ],
+            [
+                0,
+                1
+            ],
+            [
+                1,
+                -1
+            ],
+            [
+                0,
+                0
+            ],
+            [
+                1,
+                -1
+            ],
+            [
+                0,
+                1
+            ],
+            [
+                1,
+                -1
+            ],
+            [
+                0,
+                0
+            ],
+            [
+                1,
+                -1
+            ],
+            [
+                0,
+                1
+            ],
+            [
+                1,
+                1
+            ],
+            [
+                0,
+                0
+            ],
+            [
+                1,
+                -1
+            ],
+            [
+                0,
+                0
+            ],
+            [
+                1,
+                -1
+            ],
+            [
+                0,
+                1
+            ],
+            [
+                1,
+                -1
+            ],
+            [
+                0,
+                -1
+            ],
+            [
+                1,
+                0
+            ],
+            [
+                0,
+                1
+            ],
+            [
+                1,
+                -1
+            ],
+            [
+                0,
+                1
+            ],
+            [
+                1,
+                1
+            ],
+            [
+                0,
+                1
+            ],
+            [
+                1,
+                1
+            ],
+            [
+                0,
+                -1
+            ],
+            [
+                1,
+                0
+            ],
+            [
+                0,
+                -1
+            ],
+            [
+                1,
+                0
+            ],
+            [
+                0,
+                0
+            ],
+            [
+                1,
+                -1
+            ],
+            [
+                0,
+                0
+            ],
+            [
+                1,
+                -1
+            ],
+            [
+                0,
+                0
+            ]
+        ],
+        "raw_hallucination_difficulty": [
+            "medium",
+            null,
+            "hard",
+            null,
+            "hard",
+            null,
+            "easy",
+            null,
+            "hard",
+            null,
+            "medium",
+            null,
+            "easy",
+            null,
+            "hard",
+            null,
+            "hard",
+            null,
+            "hard",
+            null,
+            "medium",
+            null,
+            "hard",
+            null,
+            "easy",
+            null,
+            "hard",
+            null,
+            "easy",
+            null,
+            "easy",
+            null,
+            "medium",
+            null,
+            "hard",
+            null,
+            "hard",
+            null,
+            "medium",
+            null
+        ],
+        "valid_idxs": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            7,
+            9,
+            11,
+            13,
+            15,
+            16,
+            17,
+            19,
+            21,
+            24,
+            25,
+            27,
+            28,
+            29,
+            30,
+            32,
+            34,
+            35,
+            37,
+            39
+        ],
+        "gt_pred_pairs": [
+            [
+                1,
+                1
+            ],
+            [
+                0,
+                1
+            ],
+            [
+                1,
+                0
+            ],
+            [
+                0,
+                1
+            ],
+            [
+                1,
+                1
+            ],
+            [
+                0,
+                1
+            ],
+            [
+                0,
+                1
+            ],
+            [
+                0,
+                0
+            ],
+            [
+                0,
+                1
+            ],
+            [
+                0,
+                0
+            ],
+            [
+                0,
+                1
+            ],
+            [
+                1,
+                1
+            ],
+            [
+                0,
+                0
+            ],
+            [
+                0,
+                0
+            ],
+            [
+                0,
+                1
+            ],
+            [
+                1,
+                0
+            ],
+            [
+                0,
+                1
+            ],
+            [
+                0,
+                1
+            ],
+            [
+                1,
+                1
+            ],
+            [
+                0,
+                1
+            ],
+            [
+                1,
+                1
+            ],
+            [
+                1,
+                0
+            ],
+            [
+                1,
+                0
+            ],
+            [
+                0,
+                0
+            ],
+            [
+                0,
+                0
+            ],
+            [
+                0,
+                0
+            ]
+        ],
+        "valid_hal_difficulty": [
+            "medium",
+            null,
+            "hard",
+            null,
+            "hard",
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            "hard",
+            null,
+            null,
+            null,
+            "easy",
+            null,
+            null,
+            "easy",
+            null,
+            "easy",
+            "medium",
+            "hard",
+            null,
+            null,
+            null
+        ],
+        "valid_hal_category": [
+            "Mechanism and Pathway Misattribution",
+            null,
+            "Incomplete Information",
+            null,
+            "Misinterpretation of #Question#",
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            "Misinterpretation of #Question#",
+            null,
+            null,
+            null,
+            "Misinterpretation of #Question#",
+            null,
+            null,
+            "Incomplete Information",
+            null,
+            "Misinterpretation of #Question#",
+            "Misinterpretation of #Question#",
+            "Misinterpretation of #Question#",
+            null,
+            null,
+            null
+        ]
+    },
+    "metrics": {
+        "gpu_report": {
+            "peak_gpu_load": 1.0,
+            "peak_mem_util": 0.10938178345055136,
+            "avg_load": 0.71,
+            "avg_util": 0.10938178345055134,
+            "std_load": 0.20240223977680352,
+            "std_util": 1.3877787807814457e-17,
+            "mem_total": 46068.0,
+            "load_logs": [
+                0.0,
+                0.89,
+                0.69,
+                0.77,
+                1.0,
+                0.71,
+                0.72,
+                0.74,
+                0.74,
+                0.72,
+                0.73,
+                0.78,
+                0.8,
+                0.77,
+                0.77,
+                0.76,
+                0.77,
+                0.42
+            ],
+            "util_logs": [
+                0.10938178345055136,
+                0.10938178345055136,
+                0.10938178345055136,
+                0.10938178345055136,
+                0.10938178345055136,
+                0.10938178345055136,
+                0.10938178345055136,
+                0.10938178345055136,
+                0.10938178345055136,
+                0.10938178345055136,
+                0.10938178345055136,
+                0.10938178345055136,
+                0.10938178345055136,
+                0.10938178345055136,
+                0.10938178345055136,
+                0.10938178345055136,
+                0.10938178345055136,
+                0.10938178345055136
+            ],
+            "mem_used_logs": [
+                5039.0,
+                5039.0,
+                5039.0,
+                5039.0,
+                5039.0,
+                5039.0,
+                5039.0,
+                5039.0,
+                5039.0,
+                5039.0,
+                5039.0,
+                5039.0,
+                5039.0,
+                5039.0,
+                5039.0,
+                5039.0,
+                5039.0,
+                5039.0
+            ]
+        },
+        "latency_report": {
+            "latencies": [
+                2.8005411624908447,
+                1.6755738258361816,
+                0.4073319435119629,
+                2.280944347381592,
+                2.8480753898620605,
+                1.955822229385376,
+                1.278803825378418,
+                2.4750094413757324,
+                4.242326974868774,
+                0.18763065338134766,
+                2.956641912460327,
+                2.2887189388275146,
+                1.819751501083374,
+                1.252143383026123,
+                2.6921818256378174,
+                2.1825146675109863,
+                3.7004194259643555,
+                0.1074974536895752,
+                4.171535491943359,
+                0.15059876441955566,
+                3.6942262649536133,
+                2.3135831356048584,
+                3.8284752368927,
+                5.0056939125061035,
+                0.3712139129638672,
+                2.238260507583618,
+                3.4777231216430664,
+                3.4580085277557373,
+                2.8783156871795654,
+                0.21370625495910645,
+                1.357351541519165,
+                2.3149895668029785,
+                2.2121269702911377,
+                5.0057737827301025,
+                2.821551561355591,
+                1.4762499332427979,
+                1.8208463191986084,
+                1.1930432319641113,
+                1.1586217880249023,
+                0.1468205451965332
+            ],
+            "peak_latency": 5.0057737827301025,
+            "min_latency": 0.1074974536895752,
+            "avg_latency": 2.2115161240100862,
+            "std_dev_latecy": 1.3205834467425168,
+            "var_latency": 1.7439406398103459,
+            "total_exp_inference_time_sec": 88.46064496040344,
+            "throughput_prompts_per_sec": 0.45217848024852986
+        },
+        "cm": [
+            [
+                7,
+                10
+            ],
+            [
+                4,
+                5
+            ]
+        ],
+        "accuracy": 0.46153846153846156,
+        "precision": 0.3333333333333333,
+        "recall": 0.5555555555555556,
+        "f1-score": 0.4166666666666667,
+        "support": null,
+        "abstention_rate": 0.35,
+        "fn_difficulty_counts": {
+            "hard": 2,
+            "easy": 1,
+            "medium": 1
+        },
+        "fn_category_counts": {
+            "Misinterpretation of #Question#": 3,
+            "Incomplete Information": 1,
+            "Mechanism and Pathway Misattribution": 0,
+            "Methodological and Evidence Fabrication": 0
+        },
+        "tp_difficulty_counts": {
+            "hard": 2,
+            "easy": 2,
+            "medium": 1
+        },
+        "tp_category_counts": {
+            "Misinterpretation of #Question#": 3,
+            "Mechanism and Pathway Misattribution": 1,
+            "Incomplete Information": 1
+        },
+        "fnr_difficulty": {
+            "hard": 0.5,
+            "easy": 0.3333333333333333,
+            "medium": 0.5
+        },
+        "fnr_category": {
+            "Incomplete Information": 0.5,
+            "Mechanism and Pathway Misattribution": 0.0,
+            "Methodological and Evidence Fabrication": 0.0,
+            "Misinterpretation of #Question#": 0.5
+        },
+        "tpr_difficulty": {
+            "hard": 0.5,
+            "easy": 0.6666666666666666,
+            "medium": 0.5
+        },
+        "tpr_category": {
+            "Incomplete Information": 0.5,
+            "Mechanism and Pathway Misattribution": 1.0,
+            "Methodological and Evidence Fabrication": 0.0,
+            "Misinterpretation of #Question#": 0.5
+        }
+    }
+}

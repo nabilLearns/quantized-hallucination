@@ -352,24 +352,27 @@ async def ollama_classify(prompts, model, experiment_name, BATCH_SIZE, MAX_NEW_T
     log.info(f"Starting Ollama Hallucination Detection for {model}.")
     outputs = []
     latencies = []
+    timeout = 15 # seconds
     for i, prompt in enumerate(prompts):
         start = time()
         try:
             response = await asyncio.wait_for(
-                asyncio.to_thread(lambda: safe_ollama_chat(prompt, model)), timeout=30
+                asyncio.to_thread(lambda: safe_ollama_chat(prompt, model)), timeout=timeout
             ) #ollama.chat(model=model,messages=prompt)
         except asyncio.TimeoutError:
-            log.info(f"[Timeout] Inference for {i}th prompt exceeded 30s timeout.")
-            response = None
+            log.info(f"[Timeout] Inference for {i}th prompt exceeded {timeout}s timeout.")
+            response = ''
         duration = time() - start
         if i % 10 == 0:
-            if response != None:
+            try:
                 log.info(f"Inference for {i}th prompt took {duration:.2f}s | Response: {response['message']['content'].strip()}")
+            except:
+                log.info(f"Inference for {i}th prompt took {duration:.2f}s | Response: {response}")
         latencies.append(duration)
         try:
             outputs.append(response['message']['content'].strip())
         except:
-            outputs.append(None)
+            outputs.append(response)
     log.info("Inference Done!")
     return outputs, latencies
 

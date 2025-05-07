@@ -1,0 +1,3 @@
+- model=llama3-med
+- quantization=gguf
+- quantization.level=q2_k
